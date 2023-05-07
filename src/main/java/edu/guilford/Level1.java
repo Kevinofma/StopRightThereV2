@@ -17,6 +17,8 @@ import gameassets.ScoreLabel;
 
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.ParallelTransition;
@@ -230,6 +232,15 @@ public class Level1 extends Pane {
                     volumeSlider.setMin(0);
                     volumeSlider.setMax(1);
                     volumeSlider.setValue(volumeLevel);
+                    volumeSlider.valueProperty().addListener(new InvalidationListener() {
+                        @Override
+                        public void invalidated(Observable observable) {
+                            musicPlayer.setVolume(volumeSlider.getValue());
+                            volumeLevel = volumeSlider.getValue();
+                        }
+                    });
+                    // set the color of the slider to white
+                    volumeSlider.setStyle("-fx-control-inner-background: white;");
                     getChildren().add(volumeSlider);
 
                 } else {
