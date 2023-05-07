@@ -22,7 +22,15 @@ public class LevelSelect extends Pane {
     private Label hardcoreStatus;
     MediaPlayer mediaPlayer;
 
+    static String songVideo;
+    static String songFileName;
+    static int songBPM;
+    static int songDelay;
+
     private static boolean hardcoreDiff = false;
+    private static boolean chaosDiff = false;
+    private static boolean infiniteHealth = false;
+    private static boolean songWithVideo = false;
 
     String song1Name = "Flower Dance";
     String song2Name = "The Stains of Time";
@@ -109,7 +117,11 @@ public class LevelSelect extends Pane {
         // make the song1 button create a new scene when it is clicked
         song1.setOnAction(event -> {
             hitsound();
-            Scene gameScene = new Scene(new Level1(), 1250, 650);
+            songVideo = "FlowerDanceVideo.mp4";
+            songFileName = "FlowerDance.wav";
+            songBPM = 100;
+            songDelay = 44;
+            Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(gameScene);
         });
@@ -138,6 +150,17 @@ public class LevelSelect extends Pane {
             song2.setStyle(easyStyleNormal);
         });
 
+        song2.setOnAction(event -> {
+            hitsound();
+            songVideo = "StainsOfTimeVideo.mp4";
+            songFileName = "The_Stains_of_Time.wav";
+            songBPM = 100;
+            songDelay = 5;
+            Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
+            Stage Stage = (Stage) this.getScene().getWindow();
+            Stage.setScene(gameScene);
+        });
+
         // in the top left corner of the button, display the text "Easy"
         song2.setGraphic(new Label("Easy"));
         song2.getGraphic().setStyle(easyStyleNormal);
@@ -158,6 +181,18 @@ public class LevelSelect extends Pane {
         // make the song3 button change back to normal when the mouse is no longer hovering over it
         song3.setOnMouseExited(event -> {
             song3.setStyle(mediumStyleNormal);
+        });
+
+        song3.setOnAction(event -> {
+            hitsound();
+            songVideo = "DynamiteVideo.mp4";
+            songFileName = "DynamiteVideo.mp4";
+            songBPM = 120;
+            songDelay = 14;
+            songWithVideo = true;
+            Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
+            Stage Stage = (Stage) this.getScene().getWindow();
+            Stage.setScene(gameScene);
         });
 
         // in the top left corner of the button, display the text "Medium"
@@ -278,6 +313,21 @@ public class LevelSelect extends Pane {
     public static boolean getHardcoreDiff() {
         return hardcoreDiff;
     }
+
+    //getter for chaosDiff
+    public static boolean getChaosDiff() {
+        return chaosDiff;
+    }
+
+    //getter for infiniteHealth
+    public static boolean getInfiniteHealth() {
+        return infiniteHealth;
+    }
+
+    //getter for songVideo
+    public static String getSongVideo() {
+        return songVideo;
+    }
     
     public void hitsound() {
         String s = "src/main/resources/hitsound.wav";
@@ -285,6 +335,22 @@ public class LevelSelect extends Pane {
         Media h = new Media(Paths.get(s).toUri().toString());
         mediaPlayer = new MediaPlayer(h);
         mediaPlayer.play();
+    }
+
+    public static int getBPM() {
+        return songBPM;
+    }
+
+    public static int getSongDelay() {
+        return songDelay;
+    }
+
+    public static String getSongFileName() {
+        return songFileName;
+    }
+
+    public static boolean getSongWithVideo() {
+        return songWithVideo;
     }
     
 }

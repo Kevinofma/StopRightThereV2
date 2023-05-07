@@ -14,14 +14,14 @@ import javafx.scene.media.MediaPlayer;
 public class StartMenuPane extends Pane {
 
     private Button startButton;
-    private Button infoButton;
+    private Button tutorialButton;
     MediaPlayer mediaPlayer;
 
     //constructor
     public StartMenuPane() {
 
         startButton = new Button("Start");
-        infoButton = new Button("Information");
+        tutorialButton = new Button("Tutorial");
 
         // add the start button to the pane
         this.getChildren().add(startButton);
@@ -34,14 +34,14 @@ public class StartMenuPane extends Pane {
         startButton.setMaxSize(155, 57);
 
         // add the info button to the pane
-        this.getChildren().add(infoButton);
-        infoButton.setLayoutX(122);
-        infoButton.setLayoutY(295);
+        this.getChildren().add(tutorialButton);
+        tutorialButton.setLayoutX(122);
+        tutorialButton.setLayoutY(295);
         // set the font of the button to "Dialog", Font.BOLD, 12, remove the focus color
-        infoButton.setStyle("-fx-font: 12 \"Dialog\"; -fx-font-weight: bold; -fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; -fx-background-radius: 2, 2, 2, 2;");
+        tutorialButton.setStyle("-fx-font: 12 \"Dialog\"; -fx-font-weight: bold; -fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; -fx-background-radius: 2, 2, 2, 2;");
         // Set the size of the button to 60
-        infoButton.setMinSize(155, 57);
-        infoButton.setMaxSize(155, 57);
+        tutorialButton.setMinSize(155, 57);
+        tutorialButton.setMaxSize(155, 57);
 
 
         // set the background to stopRightThereLogo.jpg, set the size of the background to a width of 500, 500 but start the background at -50, 0
@@ -73,24 +73,24 @@ public class StartMenuPane extends Pane {
         });
 
         // make the info button create a new scene when it is clicked
-        infoButton.setOnAction(event -> {
+        tutorialButton.setOnAction(event -> {
             // Create a new instance of the Scene class and set it as the active scene
             hitsound();
-            Scene infoScene = new Scene(new InfoPage(), 640, 480);
+            Scene infoScene = new Scene(new Tutorial(), 640, 480);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(infoScene);
         });
 
         // make the info button make a sound when it is hovered over
-        infoButton.setOnMouseEntered(event -> {
+        tutorialButton.setOnMouseEntered(event -> {
             // create a new instance of the Sound class and play the sound
-            infoButton.setStyle("-fx-font: 18 \"Dialog\"; -fx-font-weight: bold; -fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; -fx-background-radius: 2, 2, 2, 2;");
+            tutorialButton.setStyle("-fx-font: 18 \"Dialog\"; -fx-font-weight: bold; -fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; -fx-background-radius: 2, 2, 2, 2;");
             hitsound();
         });
 
         // make the info button change font when it is not hovered over
-        infoButton.setOnMouseExited(event -> {
-            infoButton.setStyle("-fx-font: 12 \"Dialog\"; -fx-font-weight: bold; -fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; -fx-background-radius: 2, 2, 2, 2;");
+        tutorialButton.setOnMouseExited(event -> {
+            tutorialButton.setStyle("-fx-font: 12 \"Dialog\"; -fx-font-weight: bold; -fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; -fx-background-radius: 2, 2, 2, 2;");
         });
 
     }
