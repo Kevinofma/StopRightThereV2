@@ -2,9 +2,11 @@ package edu.guilford;
 
 import java.lang.NullPointerException;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
+import gameassets.AccuracyLabel;
 import gameassets.CountdownText;
 import gameassets.GameLine;
 import gameassets.HealthBar;
@@ -17,8 +19,6 @@ import gameassets.ScoreLabel;
 import gameassets.VolumeLabel;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.ParallelTransition;
@@ -31,7 +31,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -100,11 +99,11 @@ import javafx.util.Duration;
 // idk if this actually optimizes the code but it makes it look cleaner and shows usage of extends
 // have musicplayer threads take the path of the song as a parameter // SCRAPPED CANT MAKE SUBCLASSES FROM MUSICPLAYER
 // move all these classes into a package called gameassets
+// * change the volume of the music and soundFX when paused
+// * set the score to 0 if the score is negative so you cant get a negative score
+// * add a accuracy counter that keeps track of the amount of times the player clicked the button on the beat and the amount of times the player missed the beat as a percent
 
 // TO-DO LIST: (copy and paste into features when finished)
-// create a way to change the volume of the music
-// set the score to 0 if the score is negative so you cant get a negative score
-// add a accuracy counter that keeps track of the amount of times the player clicked the button on the beat and the amount of times the player missed the beat as a percent
 // add time left until the song is over
 // create a hardcore mode where the game ends as soon as the player misses the beat
 // create a formula that gets where you clicked on the button and calculate how close you were to the center of the button, and store it as a value
@@ -171,6 +170,12 @@ public class Level1 extends Pane {
     private double volumeLevel = 1;
     private VolumeLabel volumeLabel;
     private Slider volumeSlider;
+
+    int totalNumButtons = 0;
+    int numButtonsHit = 0;
+    int numButtonsMissed = 0;
+    double accuracy = 0;
+    private AccuracyLabel accuracyLabel;
 
     // constructor
     public Level1() {
@@ -265,9 +270,16 @@ public class Level1 extends Pane {
 
         scoreLabel = new ScoreLabel();
         scoreLabel.setScore(score);
-        scoreLabel.setTranslateX(1100);
+        scoreLabel.setTranslateX(1000);
         scoreLabel.setTranslateY(30);
         getChildren().add(scoreLabel);
+
+        // create a an accuracy label that displays the accuracy of the player
+        accuracyLabel = new AccuracyLabel();
+        accuracyLabel.setAccuracy(100);
+        accuracyLabel.setTranslateX(1000);
+        accuracyLabel.setTranslateY(60);
+        getChildren().add(accuracyLabel);
 
         healthBar = new HealthBar();
         healthBar.setWidth(HEALTH_BAR_WIDTH);
@@ -344,6 +356,7 @@ public class Level1 extends Pane {
             // increment the button count every time a button is spawned but reset the count
             // to 1 when it goes above 10
             buttonCount++;
+            totalNumButtons++;
             if (buttonCount > 4) {
                 buttonCount = 1;
                 switchColor = true;
@@ -419,7 +432,6 @@ public class Level1 extends Pane {
                         increaseScore();
                         System.out.println("Perfect");
                         hitsound();
-                        comboCounter++;
 
                         // if comboCounter is greater than 0, then display the combo counter
                         if (comboCounter > 0) {
@@ -671,6 +683,9 @@ public class Level1 extends Pane {
         score = score + 500;
         scoreLabel.setScore(score);
         currentHealth = currentHealth + 5;
+        comboCounter++;
+        numButtonsHit++;
+        calculateAccuracy();
     }
 
     public void comboBonus() {
@@ -681,19 +696,37 @@ public class Level1 extends Pane {
     public void decreaseScoreLight() {
         comboCounter = 0;
         score = score - 250;
+        if (score == 0 || score < 0) {
+            score = 0;
+        }
         scoreLabel.setScore(score);
         comboCounter = 0;
         comboLevel = 0;
         currentHealth = currentHealth - 2;
+        numButtonsMissed++;
+        calculateAccuracy();
     }
 
     public void decreaseScoreFull() {
         comboCounter = 0;
         score = score - 500;
+        if (score == 0 || score < 0) {
+            score = 0;
+        }
         scoreLabel.setScore(score);
         comboCounter = 0;
         comboLevel = 0;
         currentHealth = currentHealth - 3;
+        numButtonsMissed++;
+        calculateAccuracy();
+    }
+
+    public void calculateAccuracy() {
+        //accuracy = ((double) numButtonsHit / totalNumButtons) * 100;
+        accuracy = ((double) numButtonsHit / (numButtonsHit + numButtonsMissed)) * 100;
+        DecimalFormat decimalFormat = new DecimalFormat("#.###");
+        double roundedAccuracy = Double.parseDouble(decimalFormat.format(accuracy));
+        accuracyLabel.setAccuracy(roundedAccuracy);
     }
 
     public void combosound() {
