@@ -28,6 +28,7 @@ import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -160,6 +161,8 @@ public class Level1 extends Pane {
     private Rectangle dimRectangle;
     private PausedHintText pauseHint;
 
+    private double volumeLevel;
+
     // constructor
     public Level1() {
 
@@ -219,6 +222,15 @@ public class Level1 extends Pane {
                     rotateTransition.setCycleCount(Animation.INDEFINITE);
                     rotateTransition.setAutoReverse(true);
                     rotateTransition.play();
+
+                    // create a slider that controls the volume of the music
+                    Slider volumeSlider = new Slider();
+                    volumeSlider.setTranslateX(1000);
+                    volumeSlider.setTranslateY(650);
+                    volumeSlider.setMin(0);
+                    volumeSlider.setMax(1);
+                    volumeSlider.setValue(volumeLevel);
+                    getChildren().add(volumeSlider);
 
                 } else {
                     unpauseGame();
