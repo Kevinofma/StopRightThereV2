@@ -154,6 +154,9 @@ public class Level1 extends Pane {
     Timeline lateTimer;
     Timeline clearTimer;
     MediaPlayer musicPlayer;
+    MediaPlayer comboPlayer;
+    boolean comboPlayerOn = false; // use for the checkMusicPlayer method to only check the comboPlayer when its
+                                   // been turned on
     MediaPlayer mediaVideoPlayer;
     PauseTransition delay;
 
@@ -690,11 +693,13 @@ public class Level1 extends Pane {
     public void combosound() {
         String s = "src/main/resources/Round" + comboLevel + ".wav";
         Media h = new Media(Paths.get(s).toUri().toString());
-        MediaPlayer comboPlayer = new MediaPlayer(h);
+        comboPlayer = new MediaPlayer(h);
         // set the volume to 50%
         comboPlayer.setVolume(1);
         comboPlayer.play();
         System.out.println(comboPlayer.getStatus());
+        comboPlayerOn = true;
+
     }
 
     private void updateHealthBar() {
@@ -835,6 +840,11 @@ public class Level1 extends Pane {
         }
         System.out.println(musicPlayer.getStatus()); // for some reason music will randomly stop sometimes if this
                                                      // is not here... WHYYYY!!!!
+
+        if (comboPlayerOn) {
+            System.out.println(comboPlayer.getStatus()); // for some reason music will randomly stop sometimes if this
+                                                         // is not here... WHYYYY!!!!
+        }
     }
 
     private void endGame() {
