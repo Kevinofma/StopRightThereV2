@@ -14,7 +14,7 @@ import gameassets.PauseMenuButton;
 import gameassets.PausedHintText;
 import gameassets.PausedText;
 import gameassets.ScoreLabel;
-
+import gameassets.VolumeLabel;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.beans.InvalidationListener;
@@ -28,8 +28,10 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -166,7 +168,9 @@ public class Level1 extends Pane {
     private Rectangle dimRectangle;
     private PausedHintText pauseHint;
 
-    private double volumeLevel;
+    private double volumeLevel = 1;
+    private VolumeLabel volumeLabel;
+    private Slider volumeSlider;
 
     // constructor
     public Level1() {
@@ -187,7 +191,7 @@ public class Level1 extends Pane {
                     levelSelectButton = new PauseMenuButton();
                     levelSelectButton.setText("Level Select");
                     levelSelectButton.setTranslateX(475);
-                    levelSelectButton.setTranslateY(300);
+                    levelSelectButton.setTranslateY(275);
                     getChildren().add(levelSelectButton);
                     levelSelectButton.setOnAction(event -> {
                         hitsound();
@@ -200,7 +204,7 @@ public class Level1 extends Pane {
                     restartButton = new PauseMenuButton();
                     restartButton.setText("Restart Level");
                     restartButton.setTranslateX(465);
-                    restartButton.setTranslateY(450);
+                    restartButton.setTranslateY(425);
                     getChildren().add(restartButton);
                     restartButton.setOnAction(event -> {
                         hitsound();
@@ -229,22 +233,22 @@ public class Level1 extends Pane {
                     rotateTransition.play();
 
                     // create a slider that controls the volume of the music
-                    Slider volumeSlider = new Slider();
-                    volumeSlider.setTranslateX(1000);
-                    volumeSlider.setTranslateY(650);
-                    volumeSlider.setMin(0);
-                    volumeSlider.setMax(1);
+                    volumeSlider = new Slider(0, 1, 1); // Volume range is between 0 and 1
+                    volumeSlider.setOrientation(Orientation.HORIZONTAL);
+                    volumeSlider.setLayoutX(460); // Adjust the position as needed
+                    volumeSlider.setLayoutY(600);
                     volumeSlider.setValue(volumeLevel);
-                    volumeSlider.valueProperty().addListener(new InvalidationListener() {
-                        @Override
-                        public void invalidated(Observable observable) {
-                            musicPlayer.setVolume(volumeSlider.getValue());
-                            volumeLevel = volumeSlider.getValue();
-                        }
-                    });
-                    // set the color of the slider to white
-                    volumeSlider.setStyle("-fx-control-inner-background: white;");
+                    volumeSlider.setPrefWidth(350);
                     getChildren().add(volumeSlider);
+                    volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                        volumeLevel = newValue.doubleValue();
+                    });
+
+                    volumeLabel = new VolumeLabel();
+                    volumeLabel.setText("Volume");
+                    volumeLabel.setLayoutX(600); // Adjust the position as needed
+                    volumeLabel.setLayoutY(585);
+                    getChildren().add(volumeLabel);
 
                 } else {
                     unpauseGame();
@@ -253,6 +257,8 @@ public class Level1 extends Pane {
                     getChildren().remove(dimRectangle);
                     getChildren().remove(restartButton);
                     getChildren().remove(pauseHint);
+                    getChildren().remove(volumeSlider);
+                    getChildren().remove(volumeLabel);
                 }
             }
         });
@@ -308,7 +314,7 @@ public class Level1 extends Pane {
 
         Media musicMedia = new Media(Paths.get("src/main/resources/FlowerDance.wav").toUri().toString());
         musicPlayer = new MediaPlayer(musicMedia);
-        musicPlayer.setVolume(0.5);
+        musicPlayer.setVolume(0.5 * volumeLevel);
         Timeline startMusic = new Timeline(new KeyFrame(Duration.millis(noteBuffer), e -> {
             musicPlayer.play();
         }));
@@ -640,7 +646,7 @@ public class Level1 extends Pane {
         Media h = new Media(Paths.get(s).toUri().toString());
         MediaPlayer hitPlayer = new MediaPlayer(h);
         // set the volume to 50%
-        hitPlayer.setVolume(0.1);
+        hitPlayer.setVolume(0.5 * volumeLevel);
         hitPlayer.play();
     }
 
@@ -648,7 +654,7 @@ public class Level1 extends Pane {
         String s = "src/main/resources/misssound.wav";
         Media h = new Media(Paths.get(s).toUri().toString());
         MediaPlayer missPlayer = new MediaPlayer(h);
-        missPlayer.setVolume(2);
+        missPlayer.setVolume(1 * volumeLevel);
         // check to see if the missPlayer is already playing so that the miss sounds
         // dont buffer
         if (missPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
@@ -784,7 +790,7 @@ public class Level1 extends Pane {
             }
             musicPlayer.play();
             mediaVideoPlayer.play();
-
+            changeVolume();
             pausedDuringStartup = false;
             isGamePaused = false;
         }
@@ -861,6 +867,11 @@ public class Level1 extends Pane {
         Scene level1Scene = new Scene(new Level1(), 1250, 650);
         Stage Stage = (Stage) this.getScene().getWindow();
         Stage.setScene(level1Scene);
+    }
+
+    // create a method that changes the volumes of the music and the combo sounds
+    public void changeVolume() {
+        musicPlayer.setVolume(0.5 * volumeLevel);
     }
 
 }
