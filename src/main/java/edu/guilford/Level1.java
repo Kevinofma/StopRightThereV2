@@ -105,15 +105,16 @@ import javafx.util.Duration;
 // * add a accuracy counter that keeps track of the amount of times the player clicked the button on the beat and the amount of times the player missed the beat as a percent
 // * add time left until the song is over as a pie chart // pie chart is confusing to implement use a vertical bar instead
 // * End the game when the song ends
+// * create a hardcore mode where the game ends as soon as the player misses the beat
 
 // TO-DO LIST: (copy and paste into features when finished)
-// create a hardcore mode where the game ends as soon as the player misses the beat
-// create a formula that gets where you clicked on the button and calculate how close you were to the center of the button, and store it as a value
+// make this entire class into a game class you can make sub classes of for the levels
 
 // TO - MAYBE - DO LIST:
 // and a cursor trail and custon cursor and an effect when the cursor clicks anywhere? maybe?
 // and more splash text maybe?
 // replace the start button with a cool animation when hovered
+// create a formula that gets where you clicked on the button and calculate how close you were to the center of the button, and store it as a value
 
 public class Level1 extends Pane {
 
@@ -145,7 +146,7 @@ public class Level1 extends Pane {
     private double currentHealth = 100.0;
     private HealthBar healthBar;
 
-    // private boolean hardcoreDiff = false;
+    private boolean hardcoreDiff = false;
     private boolean chaosDiff = false;
     private boolean infiniteHealth = true;
 
@@ -190,6 +191,8 @@ public class Level1 extends Pane {
     // constructor
     public Level1() {
 
+        hardcoreDiff = LevelSelect.getHardcoreDiff();
+        
         // set the background color to black
         setStyle("-fx-background-color: black;");
 
@@ -737,6 +740,9 @@ public class Level1 extends Pane {
         currentHealth = currentHealth - 2;
         numButtonsMissed++;
         calculateAccuracy();
+        if (hardcoreDiff) {
+            endGame();
+        }
     }
 
     public void decreaseScoreFull() {
@@ -751,6 +757,9 @@ public class Level1 extends Pane {
         currentHealth = currentHealth - 3;
         numButtonsMissed++;
         calculateAccuracy();
+        if (hardcoreDiff) {
+            endGame();
+        }
     }
 
     public void calculateAccuracy() {
