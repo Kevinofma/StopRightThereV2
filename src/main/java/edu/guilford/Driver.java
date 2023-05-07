@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import java.io.IOException;
 
@@ -29,7 +30,7 @@ public class Driver extends Application {
         stage.setTitle("Stop Right There");
 
         // set the icon of the stage to vinylDisc.png
-        stage.getIcons().add(new javafx.scene.image.Image("vinylDisc.png"));
+        stage.getIcons().add(new Image("vinylDisc.png"));
     }
 
     public static void main(String[] args) {
