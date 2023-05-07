@@ -16,6 +16,7 @@ import gameassets.PauseMenuButton;
 import gameassets.PausedHintText;
 import gameassets.PausedText;
 import gameassets.ScoreLabel;
+import gameassets.TimeRemainingBar;
 import gameassets.VolumeLabel;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
@@ -102,9 +103,10 @@ import javafx.util.Duration;
 // * change the volume of the music and soundFX when paused
 // * set the score to 0 if the score is negative so you cant get a negative score
 // * add a accuracy counter that keeps track of the amount of times the player clicked the button on the beat and the amount of times the player missed the beat as a percent
+// * add time left until the song is over as a pie chart // pie chart is confusing to implement use a vertical bar instead
+// * End the game when the song ends
 
 // TO-DO LIST: (copy and paste into features when finished)
-// add time left until the song is over
 // create a hardcore mode where the game ends as soon as the player misses the beat
 // create a formula that gets where you clicked on the button and calculate how close you were to the center of the button, and store it as a value
 
@@ -145,6 +147,7 @@ public class Level1 extends Pane {
 
     // private boolean hardcoreDiff = false;
     private boolean chaosDiff = false;
+    private boolean infiniteHealth = true;
 
     private static Timeline countdownTimeline;
 
@@ -176,6 +179,13 @@ public class Level1 extends Pane {
     int numButtonsMissed = 0;
     double accuracy = 0;
     private AccuracyLabel accuracyLabel;
+
+    private double remainingTime; // (in seconds)
+    private static double totalSongTime = 100; // random high value (in seconds)
+    private TimeRemainingBar timeBar;
+    private int timeBarHeight = 575;
+    private int refreshRate = 15;
+    Timeline barTimeline;
 
     // constructor
     public Level1() {
@@ -281,10 +291,19 @@ public class Level1 extends Pane {
         accuracyLabel.setTranslateY(60);
         getChildren().add(accuracyLabel);
 
+        timeBar = new TimeRemainingBar();
+        timeBar.setWidth(20);
+        timeBar.setHeight(timeBarHeight);
+        // position the time bar on the right side of the screen
+        timeBar.setTranslateX(1200);
+        timeBar.setTranslateY(40);
+        getChildren().add(timeBar);
+
+
         healthBar = new HealthBar();
         healthBar.setWidth(HEALTH_BAR_WIDTH);
         healthBar.setHeight(HEALTH_BAR_HEIGHT);
-        healthBar.setFill(Color.GREEN);
+        healthBar.setFill(Color.WHITE);
         getChildren().add(healthBar);
         double decreaseAmount = 0.1;
         int durationMillis = 15;
@@ -331,6 +350,16 @@ public class Level1 extends Pane {
             musicPlayer.play();
         }));
         startMusic.play();
+        musicPlayer.setOnReady(() -> {
+            if (musicPlayer.getStatus() == MediaPlayer.Status.READY) {
+                System.out.println("Music is ready");
+                Duration totalDuration = musicPlayer.getMedia().getDuration();
+                totalSongTime = totalDuration.toSeconds();
+                System.out.println("Total song time: " + totalSongTime + " seconds");
+                remainingTime = totalSongTime;
+            }
+        });
+        startBarTimer();
 
         gameLoop1 = new Timeline(new KeyFrame(Duration.millis(beatDuration), event -> {
             // create a new button and add it to the scene
@@ -617,6 +646,7 @@ public class Level1 extends Pane {
             clearTimer.play();
             // check if the music is still playing
             checkMusicStatus();
+            checkSongEnd();
 
         }));
 
@@ -626,7 +656,9 @@ public class Level1 extends Pane {
         delay = new PauseTransition(Duration.millis(delayDuration));
         delay.setOnFinished(event -> {
             gameLoop1.play();
-            healthTimeline.play();
+            if (!infiniteHealth) {
+            healthTimeline.play(); // only play the health timeline if infinite health is not enabled
+            }
         });
         delay.play();
         System.out.println(delay.getStatus());
@@ -722,7 +754,7 @@ public class Level1 extends Pane {
     }
 
     public void calculateAccuracy() {
-        //accuracy = ((double) numButtonsHit / totalNumButtons) * 100;
+        // accuracy = ((double) numButtonsHit / totalNumButtons) * 100;
         accuracy = ((double) numButtonsHit / (numButtonsHit + numButtonsMissed)) * 100;
         DecimalFormat decimalFormat = new DecimalFormat("#.###");
         double roundedAccuracy = Double.parseDouble(decimalFormat.format(accuracy));
@@ -734,7 +766,7 @@ public class Level1 extends Pane {
         Media h = new Media(Paths.get(s).toUri().toString());
         comboPlayer = new MediaPlayer(h);
         // set the volume to 50%
-        comboPlayer.setVolume(1);
+        comboPlayer.setVolume(1 * volumeLevel);
         comboPlayer.play();
         System.out.println(comboPlayer.getStatus());
         comboPlayerOn = true;
@@ -749,9 +781,9 @@ public class Level1 extends Pane {
 
         // Change the color of the health bar based on the health level
         if (healthPercentage >= 0.5) {
-            healthBar.setFill(Color.GREEN);
+            healthBar.setFill(Color.WHITE);
         } else if (healthPercentage >= 0.2) {
-            healthBar.setFill(Color.YELLOW);
+            healthBar.setFill(Color.PINK);
         } else {
             healthBar.setFill(Color.RED);
         }
@@ -798,6 +830,7 @@ public class Level1 extends Pane {
                     gameLoop1.pause();
                     lateTimer.pause();
                     clearTimer.pause();
+                    barTimeline.pause();
                 }
                 musicPlayer.pause();
                 mediaVideoPlayer.pause();
@@ -820,6 +853,7 @@ public class Level1 extends Pane {
                 gameLoop1.play();
                 lateTimer.play();
                 clearTimer.play();
+                barTimeline.play();
             }
             musicPlayer.play();
             mediaVideoPlayer.play();
@@ -834,6 +868,11 @@ public class Level1 extends Pane {
         if (healthTimeline != null && healthTimeline.getStatus() == Animation.Status.RUNNING) {
             // checks to see if it even exists first and then checks if its running
             healthTimeline.stop();
+        }
+
+        // Stop barTimeline if running
+        if (barTimeline != null && barTimeline.getStatus() == Animation.Status.RUNNING) {
+            barTimeline.stop();
         }
 
         // Stop gameLoop1 if running
@@ -870,6 +909,7 @@ public class Level1 extends Pane {
         if (mediaVideoPlayer != null && mediaVideoPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
             mediaVideoPlayer.stop();
         }
+        
     }
 
     public void checkMusicStatus() {
@@ -905,6 +945,27 @@ public class Level1 extends Pane {
     // create a method that changes the volumes of the music and the combo sounds
     public void changeVolume() {
         musicPlayer.setVolume(0.5 * volumeLevel);
+    }
+
+    private void startBarTimer() {
+        barTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, event -> updateBar()),
+                new KeyFrame(Duration.millis(refreshRate))
+        );
+        barTimeline.setCycleCount(Animation.INDEFINITE);
+        barTimeline.play();
+    }
+
+    private void updateBar() {
+        remainingTime = remainingTime - (refreshRate / 1000.0);
+        double percentage = remainingTime / totalSongTime;
+        timeBar.setHeight(timeBarHeight * percentage);
+    }
+
+    private void checkSongEnd() {
+        if (remainingTime <= 0) {
+            endGame();
+        }
     }
 
 }
