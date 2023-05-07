@@ -111,11 +111,12 @@ import javafx.util.Duration;
 // * BUG FIX: volume slider was incorrect when song came from video
 // * BUG FIX: If countdown is a 2 digit number, move it slightly to the left to keep it centered
 // * BUG FIX: Move score, accuracy, and time remaining bar above the video so it isn't transparent
+// * BUG FIX: you are sometimes unable to click a button under the checkmark or Xmark
+// * Now spawns a Xmark when you click outside of the button
 
 // TO-DO LIST: (copy and paste into features when finished)
 
 // TO - MAYBE - DO LIST:
-// and a cursor trail and custon cursor and an effect when the cursor clicks anywhere? maybe?
 // and more splash text maybe?
 // replace the start button with a cool animation when hovered
 // create a formula that gets where you clicked on the button and calculate how close you were to the center of the button, and store it as a value
@@ -192,7 +193,6 @@ public class GamePane extends Pane {
     Timeline barTimeline;
 
     private boolean songWithVideo = LevelSelect.getSongWithVideo();
-
 
     // constructor
     public GamePane(String songVideo, String songFileName) {
@@ -353,6 +353,23 @@ public class GamePane extends Pane {
             @Override
             public void handle(MouseEvent event) {
                 decreaseScoreLight();
+                ImageView XMark = new ImageView(new Image("xmark.png"));
+                XMark.setTranslateX(event.getX() - 75);
+                XMark.setTranslateY(event.getY() - 37.5);
+                XMark.setMouseTransparent(true);
+                XMark.setFitWidth(150);
+                XMark.setFitHeight(75);
+                XMark.setOpacity(1);
+                getChildren().add(XMark);
+                // create a parallel transition to fade out the Xmark and scale it down to 0
+                ParallelTransition fadeOut = new ParallelTransition();
+                FadeTransition fade = new FadeTransition(Duration.millis(2000), XMark);
+                fade.setToValue(0);
+                ScaleTransition scale = new ScaleTransition(Duration.millis(2000), XMark);
+                scale.setToX(0);
+                scale.setToY(0);
+                fadeOut.getChildren().addAll(fade, scale);
+                fadeOut.play();
                 misssound();
             }
         });
@@ -463,6 +480,7 @@ public class GamePane extends Pane {
                         ImageView checkMark = new ImageView(new Image("checkmark.png"));
                         checkMark.setTranslateX(gameButton.getTranslateX());
                         checkMark.setTranslateY(gameButton.getTranslateY());
+                        checkMark.setMouseTransparent(true);
                         checkMark.setFitWidth(100);
                         checkMark.setFitHeight(100);
                         checkMark.setOpacity(1);
@@ -573,6 +591,7 @@ public class GamePane extends Pane {
                         ImageView XMark = new ImageView(new Image("xmark.png"));
                         XMark.setTranslateX(gameButton.getTranslateX());
                         XMark.setTranslateY(gameButton.getTranslateY());
+                        XMark.setMouseTransparent(true);
                         XMark.setFitWidth(150);
                         XMark.setFitHeight(75);
                         XMark.setOpacity(1);
@@ -701,8 +720,8 @@ public class GamePane extends Pane {
 
     private void updateCountdownText() {
         if (countdownValue >= 10) {
-        countdownText.setTranslateX(450);
-        countdownText.setTranslateY(500);
+            countdownText.setTranslateX(450);
+            countdownText.setTranslateY(500);
         } else {
             countdownText.setTranslateX(550);
             countdownText.setTranslateY(500);
