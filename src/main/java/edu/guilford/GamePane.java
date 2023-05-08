@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
+import TutorialSlideShow.Tutorial;
 import gameassets.AccuracyLabel;
 import gameassets.CountdownText;
 import gameassets.GameLine;
@@ -116,9 +117,13 @@ import javafx.util.Duration;
 // * BUG FIX: Health cannot go above 100 anymore
 // * BUG FIX: Buttons cannot spawn on top of each other anymore
 // ** REVAMPED Start Menu
+// * Added back button to level select and prepared level select for full revamp
+// * fixed a bug where SRT! button would be off beat if menu was created from level select or tutorial
+// * Added back button to tutorial and prepared tutorial for full revamp
 
 // TO-DO LIST: (copy and paste into features when finished)
 // * BUG FIX: FIX DYNAMITE VIDEO PLAYING CREDITS AT THE END OF THE SONG
+// program game over animation and score card
 
 // TO - MAYBE - DO LIST:
 // and more splash text maybe?
@@ -226,7 +231,7 @@ public class GamePane extends Pane {
                     levelSelectButton.setOnAction(event -> {
                         hoversound();
                         endGameThreads();
-                        Scene levelSelectScene = new Scene(new LevelSelect(), 585, 360);
+                        Scene levelSelectScene = new Scene(new LevelSelect(), 640, 480);
                         Stage Stage = (Stage) this.getScene().getWindow();
                         Stage.setScene(levelSelectScene);
                     });
@@ -520,7 +525,7 @@ public class GamePane extends Pane {
                         if (comboCounter > 0) {
                             Text comboText = new Text();
                             comboText.setMouseTransparent(true);
-                            comboText.setFont(Font.font("Impact", 20 + comboCounter));
+                            comboText.setFont(Font.font("Impact", 40 + comboCounter));
                             comboText.setFill(Color.WHITE);
                             // give the text a thick pink border
                             comboText.setStroke(Color.PINK);
@@ -529,7 +534,7 @@ public class GamePane extends Pane {
                             comboText.setTranslateX(75);
                             comboText.setTranslateY(125);
                             comboText.setOpacity(1);
-                            comboText.setText("Combo x" + comboCounter);
+                            comboText.setText("x" + comboCounter);
                             // give the comboText a random tilt from -30 to 30 degrees
                             comboText.setRotate(Math.random() * 60 - 30);
                             getChildren().add(comboText);
