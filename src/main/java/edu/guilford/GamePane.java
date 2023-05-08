@@ -113,13 +113,17 @@ import javafx.util.Duration;
 // * BUG FIX: Move score, accuracy, and time remaining bar above the video so it isn't transparent
 // * BUG FIX: you are sometimes unable to click a button under the checkmark or Xmark
 // * Now spawns a Xmark when you click outside of the button
+// * BUG FIX: Health cannot go above 100 anymore
+// * BUG FIX: Buttons cannot spawn on top of each other anymore
+// ** REVAMPED Start Menu
 
 // TO-DO LIST: (copy and paste into features when finished)
+// * BUG FIX: FIX DYNAMITE VIDEO PLAYING CREDITS AT THE END OF THE SONG
 
 // TO - MAYBE - DO LIST:
 // and more splash text maybe?
-// replace the start button with a cool animation when hovered
 // create a formula that gets where you clicked on the button and calculate how close you were to the center of the button, and store it as a value
+// create a loading screen for each song that displays bpm, star difficult, song name, logo, etc
 
 public class GamePane extends Pane {
 
@@ -220,7 +224,7 @@ public class GamePane extends Pane {
                     levelSelectButton.setTranslateY(275);
                     getChildren().add(levelSelectButton);
                     levelSelectButton.setOnAction(event -> {
-                        hitsound();
+                        hoversound();
                         endGameThreads();
                         Scene levelSelectScene = new Scene(new LevelSelect(), 585, 360);
                         Stage Stage = (Stage) this.getScene().getWindow();
@@ -233,7 +237,7 @@ public class GamePane extends Pane {
                     restartButton.setTranslateY(425);
                     getChildren().add(restartButton);
                     restartButton.setOnAction(event -> {
-                        hitsound();
+                        hoversound();
                         restartGame();
                     });
 
@@ -400,8 +404,21 @@ public class GamePane extends Pane {
             // create a new button and add it to the scene
             Button gameButton = new NoteButton();
             // PLACE THE BUTTON AT A RANDOM LOCATION ON THE SCREEN
-            gameButton.setTranslateX(Math.random() * 1000 + 25);
-            gameButton.setTranslateY(Math.random() * 500 + 25);
+
+            double newX = Math.random() * 1000 + 25;
+            double newY = Math.random() * 500 + 25;
+
+            if (previousButton != null) {
+                while (Math.abs(newX - previousButton.getTranslateX()) < 50
+                        || Math.abs(newY - previousButton.getTranslateY()) < 50) {
+                    newX = Math.random() * 1000 + 25;
+                    newY = Math.random() * 500 + 25;
+                }
+            }
+
+            gameButton.setTranslateX(newX);
+            gameButton.setTranslateY(newY);
+
             switchColor = GamePane.getSwitchColor();
             if (switchColor == true) {
                 cssColor = getRandomCSSColor();
@@ -497,7 +514,7 @@ public class GamePane extends Pane {
                         // increase the score
                         increaseScore();
                         System.out.println("Perfect");
-                        hitsound();
+                        hoversound();
 
                         // if comboCounter is greater than 0, then display the combo counter
                         if (comboCounter > 0) {
@@ -729,7 +746,7 @@ public class GamePane extends Pane {
         countdownText.setText(String.valueOf(countdownValue));
     }
 
-    public void hitsound() {
+    public void hoversound() {
         String s = "src/main/resources/hitsound.wav";
         Media h = new Media(Paths.get(s).toUri().toString());
         MediaPlayer hitPlayer = new MediaPlayer(h);
@@ -758,7 +775,9 @@ public class GamePane extends Pane {
     public void increaseScore() {
         score = score + 500;
         scoreLabel.setScore(score);
-        currentHealth = currentHealth + 5;
+        if (currentHealth < 100) {
+            currentHealth = currentHealth + 5;
+        }
         comboCounter++;
         numButtonsHit++;
         calculateAccuracy();
