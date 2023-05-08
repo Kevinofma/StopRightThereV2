@@ -19,7 +19,7 @@ public class Driver extends Application {
     public void start(Stage stage) throws IOException {
         VBox root = new VBox();
         root.getChildren().add(new StartMenuPane());
-        scene1 = new Scene(root, 400, 500);
+        scene1 = new Scene(root, 1250, 650);
         stage.setScene(scene1);
         stage.show();
         

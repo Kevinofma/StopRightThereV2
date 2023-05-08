@@ -105,7 +105,7 @@ public class LevelSelect extends Pane {
         song1.setStyle(easyStyleNormal);
         // make the song1 button make a sound when it is hovered over and change font
         song1.setOnMouseEntered(event -> {
-            hitsound();
+            hoversound();
             song1.setStyle(easyStyleBig);
         });
 
@@ -116,7 +116,8 @@ public class LevelSelect extends Pane {
 
         // make the song1 button create a new scene when it is clicked
         song1.setOnAction(event -> {
-            hitsound();
+            hoversound();
+            StartMenuPane.stopThreads();
             songVideo = "FlowerDanceVideo.mp4";
             songFileName = "FlowerDance.wav";
             songBPM = 100;
@@ -141,7 +142,7 @@ public class LevelSelect extends Pane {
         song2.setStyle(easyStyleNormal);
         // make the song2 button make a sound when it is hovered over and change font
         song2.setOnMouseEntered(event -> {
-            hitsound();
+            hoversound();
             song2.setStyle(easyStyleBig);
         });
 
@@ -151,7 +152,8 @@ public class LevelSelect extends Pane {
         });
 
         song2.setOnAction(event -> {
-            hitsound();
+            hoversound();
+            StartMenuPane.stopThreads();
             songVideo = "StainsOfTimeVideo.mp4";
             songFileName = "The_Stains_of_Time.wav";
             songBPM = 100;
@@ -174,7 +176,7 @@ public class LevelSelect extends Pane {
         song3.setStyle(mediumStyleNormal);
         // make the song3 button make a sound when it is hovered over and change font
         song3.setOnMouseEntered(event -> {
-            hitsound();
+            hoversound();
             song3.setStyle(mediumStyleBig);
         });
 
@@ -184,7 +186,8 @@ public class LevelSelect extends Pane {
         });
 
         song3.setOnAction(event -> {
-            hitsound();
+            hoversound();
+            StartMenuPane.stopThreads();
             songVideo = "DynamiteVideo.mp4";
             songFileName = "DynamiteVideo.mp4";
             songBPM = 120;
@@ -208,7 +211,7 @@ public class LevelSelect extends Pane {
         song4.setStyle(mediumStyleNormal);
         // make the song4 button make a sound when it is hovered over and change font
         song4.setOnMouseEntered(event -> {
-            hitsound();
+            hoversound();
             song4.setStyle(mediumStyleBig);
         });
 
@@ -230,7 +233,7 @@ public class LevelSelect extends Pane {
         song5.setStyle(hardStyleNormal);
         // make the song5 button make a sound when it is hovered over and change font
         song5.setOnMouseEntered(event -> {
-            hitsound();
+            hoversound();
             song5.setStyle(hardStyleBig);
         });
 
@@ -252,7 +255,7 @@ public class LevelSelect extends Pane {
         song6.setStyle(hardStyleNormal);
         // make the song6 button make a sound when it is hovered over and change font
         song6.setOnMouseEntered(event -> {
-            hitsound();
+            hoversound();
             song6.setStyle(hardStyleBig);
         });
 
@@ -274,7 +277,7 @@ public class LevelSelect extends Pane {
         hardcore.setStyle(hardcoreStyleNormal);
         // make the hardcore button make a sound when it is hovered over and change font
         hardcore.setOnMouseEntered(event -> {
-            hitsound();
+            hoversound();
             hardcore.setStyle(hardcoreStyleBig);
         });
 
@@ -285,7 +288,7 @@ public class LevelSelect extends Pane {
     
         // make the hardcore button change hardcoreDiff to true/false when it is clicked and change the text of hardcoreStatus to "Hardcore: ON/OFF"
         hardcore.setOnAction(event -> {
-            hitsound();
+            hoversound();
             if (hardcoreDiff == false) {
                 hardcoreDiff = true;
                 hardcoreStatus.setText("Hardcore: " + "ON");
@@ -329,7 +332,7 @@ public class LevelSelect extends Pane {
         return songVideo;
     }
     
-    public void hitsound() {
+    public void hoversound() {
         String s = "src/main/resources/hitsound.wav";
         //String s = "src/main/resources/100BPMMetronome.mp3";
         Media h = new Media(Paths.get(s).toUri().toString());

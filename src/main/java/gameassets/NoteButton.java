@@ -12,25 +12,9 @@ public class NoteButton extends Button {
     // constructor
     public NoteButton() {
         super();
-        // switchColor = Level1.getSwitchColor();
-        // if (switchColor == true) {
-        //     cssColor = getRandomCSSColor();
-        //     switchColor = false;
-            // set the switchColor variable in Level1 to false
-        //     Level1.setSwitchColor(switchColor);
-        // }
-        // super.setStyle("-fx-background-color: " + cssColor + ";" +
-        //         "-fx-background-radius: 50; " +
-        //         "-fx-border-color: white; " +
-        //         "-fx-border-width: 5px; " +
-        //         "-fx-border-radius: 50; " +
-        //         "-fx-text-fill: white;");
         super.setPrefSize(100, 100);
         // change the font of the button to Impact, bold, 28pt
         super.setFont(javafx.scene.text.Font.font("Impact", javafx.scene.text.FontWeight.BOLD, 28));
-
-        
-        
     }
 
     public static String getRandomCSSColor() {
