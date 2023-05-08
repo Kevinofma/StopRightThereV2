@@ -17,7 +17,8 @@ public class MenuButton extends Button{
     // constructor
     public MenuButton() {
         super();
-        super.setTextFill(Color.WHITE);
+        super.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 10, 0, 0, 0);");
+        super.setTextFill(Color.rgb(255, 255, 255));
         super.setBackground(new Background(
                 new BackgroundFill(Color.PINK, new CornerRadii(10), Insets.EMPTY)));
                 super.setBorder(new Border(

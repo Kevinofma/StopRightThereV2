@@ -1,19 +1,27 @@
 package edu.guilford;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import menuassets.MenuButton;
+import menuassets.infoText;
+import menuassets.ArrowButton;
+import menuassets.DifficultyText;
 import menuassets.EasyLvlButton;
 import menuassets.HardLvlButton;
 import menuassets.MedLvlButton;
@@ -26,19 +34,18 @@ public class LevelSelect extends Pane {
     private MedLvlButton medSong2;
     private HardLvlButton hardSong1;
     private HardLvlButton hardSong2;
-    private Button hardcore;
-    private Label hardcoreStatus;
-    private Button chaos;
-    private Label chaosStatus;
-    private Button noFail;
-    private Label noFailStatus;
-    private Button returnToMenuButton;
+    private MenuButton hardcore;
+    private MenuButton chaos;
+    private MenuButton noFail;
+    private MenuButton returnToMenuButton;
     MediaPlayer hoverPlayer;
     MediaPlayer slidePlayer;
 
     static String songVideo = "MainMenuBackground.mp4";
     static String songFileName;
     static int songBPM;
+    static String songDuration;
+    static int difficultyStars;
     static int songDelay;
     static double beatsToDelayOffset = 0; // weird glitch where if if you return to menu, the SRT! button is not on beat
 
@@ -54,55 +61,6 @@ public class LevelSelect extends Pane {
     String song1HardName = "Placeholder";
     String song2HardName = "Placeholder";
 
-    String hardcoreStyleNormal = "-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
-    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
-    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
-    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
-    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
-    "-fx-text-fill: white;";  
-    String hardcoreStyleBig = "-fx-font-size: 16px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
-    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
-    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
-    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
-    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
-    "-fx-text-fill: white;";
-    String chaosStyleNormal = "-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
-    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
-    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
-    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
-    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
-    "-fx-text-fill: white;";
-    String chaosStyleBig = "-fx-font-size: 16px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
-    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
-    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
-    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
-    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
-    "-fx-text-fill: white;";
-    String noFailStyleNormal = "-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
-    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
-    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
-    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
-    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
-    "-fx-text-fill: white;";
-    String noFailStyleBig = "-fx-font-size: 16px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
-    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
-    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
-    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
-    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
-    "-fx-text-fill: white;";       
-    String menuButtonStyleNormal = "-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
-    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
-    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
-    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
-    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
-    "-fx-text-fill: white;";
-    String menuButtonStyleBig = "-fx-font-size: 16px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
-    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
-    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
-    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
-    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
-    "-fx-text-fill: white;";
-
     MediaPlayer mediaVideoPlayer;
     TranslateTransition easy1Transition;
     TranslateTransition easy2Transition;
@@ -110,42 +68,74 @@ public class LevelSelect extends Pane {
     TranslateTransition med2Transition;
     TranslateTransition hard1Transition;
     TranslateTransition hard2Transition;
+    TranslateTransition easyTextTransition;
+    TranslateTransition medTextTransition;
+    TranslateTransition hardTextTransition;
 
     boolean easyDiff = true;
     boolean medDiff = false;
     boolean hardDiff = false;
     boolean transitionsRunning = false;
 
-    MenuButton previousMenuButton;
-    MenuButton nextMenuButton;
-    
-    //constructor
+    ArrowButton previousMenuButton;
+    ArrowButton nextMenuButton;
+
+    Rectangle infoRect;
+    Rectangle topBorderRect;
+    Rectangle bottomBorderRect;
+
+    DifficultyText easyText;
+    DifficultyText medText;
+    DifficultyText hardText;
+    infoText bpmText;
+    infoText durationText;
+    infoText difficultyInfoText;
+
+    ImageView diffStar1;
+    ImageView diffStar2;
+    ImageView diffStar3;
+    ImageView diffStar4;
+    ImageView diffStar5;
+    ArrayList<ImageView> starsList = new ArrayList<ImageView>(); // adapted from lines arrayList in GamePane.java
+
+    // constructor
     public LevelSelect() {
 
         this.setStyle("-fx-background-image: url('MainMenuWallpaper.jpg'); -fx-background-size: 1250, 650; -fx-background-position: 0, 0;");
+        // this.setStyle("-fx-background-image: url('LevelSelectBlueprint.PNG'); -fx-background-size: 1250, 650; -fx-background-position: 0, 0;");
         levelSelectVideo();
+
+        hardcoreDiff = false;
+        chaosDiff = false;
+        infiniteHealth = false;
 
         easySong1 = new EasyLvlButton(song1EasyName);
         easySong2 = new EasyLvlButton(song2EasyName);
-        medSong1 = new  MedLvlButton(song1MedName);
+        medSong1 = new MedLvlButton(song1MedName);
         medSong2 = new MedLvlButton(song2MedName);
-        hardSong1 = new HardLvlButton(song1HardName); 
+        hardSong1 = new HardLvlButton(song1HardName);
         hardSong2 = new HardLvlButton(song2HardName);
-        hardcore = new Button("Hardcore");
-        hardcoreStatus = new Label("Hardcore: " + "OFF");
-        chaos = new Button("Chaos");
-        chaosStatus = new Label("Chaos: " + "OFF");
-        noFail = new Button("No Fail");
-        noFailStatus = new Label("No Fail: " + "OFF");
-        returnToMenuButton = new Button("Back");
-        previousMenuButton = new MenuButton();
-        nextMenuButton = new MenuButton();
+        easyText = new DifficultyText("Easy");
+        medText = new DifficultyText("Medium");
+        hardText = new DifficultyText("Hard");
+        infoRect = new Rectangle();
+        topBorderRect = new Rectangle();
+        bottomBorderRect = new Rectangle();
+        bpmText = new infoText("BPM: ");
+        durationText = new infoText("Duration: ");
+        difficultyInfoText = new infoText("Difficulty: ");
+        hardcore = new MenuButton();
+        chaos = new MenuButton();
+        noFail = new MenuButton();
+        returnToMenuButton = new MenuButton();
+        previousMenuButton = new ArrowButton("《");
+        nextMenuButton = new ArrowButton("》");
 
         easy1Transition = new TranslateTransition(Duration.millis(500));
         easy1Transition.setNode(easySong1);
         easy1Transition.setCycleCount(1);
         easy1Transition.setAutoReverse(false);
-        
+
         easy2Transition = new TranslateTransition(Duration.millis(500));
         easy2Transition.setNode(easySong2);
         easy2Transition.setCycleCount(1);
@@ -165,14 +155,28 @@ public class LevelSelect extends Pane {
         hard1Transition.setNode(hardSong1);
         hard1Transition.setCycleCount(1);
         hard1Transition.setAutoReverse(false);
-        
+
         hard2Transition = new TranslateTransition(Duration.millis(500));
         hard2Transition.setNode(hardSong2);
         hard2Transition.setCycleCount(1);
         hard2Transition.setAutoReverse(false);
 
-        previousMenuButton.setText("◀");
-        previousMenuButton.setLayoutX(200);
+        easyTextTransition = new TranslateTransition(Duration.millis(500));
+        easyTextTransition.setNode(easyText);
+        easyTextTransition.setCycleCount(1);
+        easyTextTransition.setAutoReverse(false);
+
+        medTextTransition = new TranslateTransition(Duration.millis(500));
+        medTextTransition.setNode(medText);
+        medTextTransition.setCycleCount(1);
+        medTextTransition.setAutoReverse(false);
+
+        hardTextTransition = new TranslateTransition(Duration.millis(500));
+        hardTextTransition.setNode(hardText);
+        hardTextTransition.setCycleCount(1);
+        hardTextTransition.setAutoReverse(false);
+
+        previousMenuButton.setLayoutX(55);
         previousMenuButton.setLayoutY(400);
         this.getChildren().add(previousMenuButton);
         previousMenuButton.setOnMouseEntered(event -> {
@@ -192,6 +196,11 @@ public class LevelSelect extends Pane {
                 easy1Transition.play();
                 easy2Transition.setByX(500);
                 easy2Transition.play();
+                medTextTransition.setByX(-500);
+                medTextTransition.play();
+                easyTextTransition.setByX(500);
+                easyTextTransition.play();
+                infoRect.setFill(Color.GREEN);
                 medDiff = false;
                 easyDiff = true;
                 slidesound();
@@ -204,6 +213,11 @@ public class LevelSelect extends Pane {
                 hard1Transition.play();
                 hard2Transition.setByX(500);
                 hard2Transition.play();
+                easyTextTransition.setByX(-500);
+                easyTextTransition.play();
+                hardTextTransition.setByX(500);
+                hardTextTransition.play();
+                infoRect.setFill(Color.RED);
                 easyDiff = false;
                 hardDiff = true;
                 slidesound();
@@ -216,14 +230,18 @@ public class LevelSelect extends Pane {
                 med1Transition.play();
                 med2Transition.setByX(500);
                 med2Transition.play();
+                hardTextTransition.setByX(-500);
+                hardTextTransition.play();
+                medTextTransition.setByX(500);
+                medTextTransition.play();
+                infoRect.setFill(Color.ORANGE);
                 hardDiff = false;
                 medDiff = true;
                 slidesound();
             }
         });
 
-        nextMenuButton.setText("▶");
-        nextMenuButton.setLayoutX(300);
+        nextMenuButton.setLayoutX(242);
         nextMenuButton.setLayoutY(400);
         this.getChildren().add(nextMenuButton);
         nextMenuButton.setOnMouseEntered(event -> {
@@ -243,6 +261,11 @@ public class LevelSelect extends Pane {
                 med1Transition.play();
                 med2Transition.setByX(500);
                 med2Transition.play();
+                easyTextTransition.setByX(-500);
+                easyTextTransition.play();
+                medTextTransition.setByX(500);
+                medTextTransition.play();
+                infoRect.setFill(Color.ORANGE);
                 medDiff = true;
                 easyDiff = false;
                 slidesound();
@@ -255,6 +278,11 @@ public class LevelSelect extends Pane {
                 hard1Transition.play();
                 hard2Transition.setByX(500);
                 hard2Transition.play();
+                medTextTransition.setByX(-500);
+                medTextTransition.play();
+                hardTextTransition.setByX(500);
+                hardTextTransition.play();
+                infoRect.setFill(Color.RED);
                 medDiff = false;
                 hardDiff = true;
                 slidesound();
@@ -267,6 +295,11 @@ public class LevelSelect extends Pane {
                 easy1Transition.play();
                 easy2Transition.setByX(500);
                 easy2Transition.play();
+                hardTextTransition.setByX(-500);
+                hardTextTransition.play();
+                easyTextTransition.setByX(500);
+                easyTextTransition.play();
+                infoRect.setFill(Color.GREEN);
                 hardDiff = false;
                 easyDiff = true;
                 slidesound();
@@ -277,7 +310,24 @@ public class LevelSelect extends Pane {
         easy2Transition.setByX(500);
         easy1Transition.play();
         easy2Transition.play();
+        easyTextTransition.setByX(500);
+        easyTextTransition.play();
         easyDiff = true;
+
+        easyText.setLayoutX(-380);
+        easyText.setLayoutY(150);
+        easyText.setFill(Color.GREEN);
+        getChildren().add(easyText);
+
+        medText.setLayoutX(-440);
+        medText.setLayoutY(150);
+        medText.setFill(Color.ORANGE);
+        getChildren().add(medText);
+
+        hardText.setLayoutX(-380);
+        hardText.setLayoutY(150);
+        hardText.setFill(Color.RED);
+        getChildren().add(hardText);
 
         easySong1.setLayoutX(-550);
         easySong1.setLayoutY(200);
@@ -287,9 +337,15 @@ public class LevelSelect extends Pane {
             hoversound();
             songVideo = "FlowerDanceVideo.mp4";
             levelSelectVideo();
+            easySong1.setMinSize(600, 80);
+            songBPM = 100;
+            songDuration = "4:23";
+            difficultyStars = 1;
+            updateInfo();
         });
 
         easySong1.setOnMouseExited(event -> {
+            easySong1.setMinSize(500, 80);
         });
 
         easySong1.setOnAction(event -> {
@@ -305,7 +361,6 @@ public class LevelSelect extends Pane {
             Stage.setScene(gameScene);
         });
 
-        
         this.getChildren().add(easySong2);
         easySong2.setLayoutX(-550);
         easySong2.setLayoutY(300);
@@ -314,9 +369,15 @@ public class LevelSelect extends Pane {
             hoversound();
             songVideo = "StainsOfTimeVideo.mp4";
             levelSelectVideo();
+            easySong2.setMinSize(600, 80);
+            songBPM = 100;
+            songDuration = "2:10";
+            difficultyStars = 2;
+            updateInfo();
         });
 
         easySong2.setOnMouseExited(event -> {
+            easySong2.setMinSize(500, 80);
         });
 
         easySong2.setOnAction(event -> {
@@ -340,9 +401,15 @@ public class LevelSelect extends Pane {
             hoversound();
             songVideo = "DynamiteVideo.mp4";
             levelSelectVideo();
+            medSong1.setMinSize(600, 80);
+            songBPM = 120;
+            songDuration = "3:21";
+            difficultyStars = 3;
+            updateInfo();
         });
 
         medSong1.setOnMouseExited(event -> {
+            medSong1.setMinSize(500, 80);
         });
 
         medSong1.setOnAction(event -> {
@@ -364,9 +431,11 @@ public class LevelSelect extends Pane {
         medSong2.setMinSize(500, 80);
         medSong2.setOnMouseEntered(event -> {
             hoversound();
+            medSong2.setMinSize(600, 80);
         });
 
         medSong2.setOnMouseExited(event -> {
+            medSong2.setMinSize(500, 80);
         });
 
         this.getChildren().add(hardSong1);
@@ -375,9 +444,11 @@ public class LevelSelect extends Pane {
         hardSong1.setMinSize(500, 80);
         hardSong1.setOnMouseEntered(event -> {
             hoversound();
+            hardSong1.setMinSize(600, 80);
         });
 
         hardSong1.setOnMouseExited(event -> {
+            hardSong1.setMinSize(500, 80);
         });
 
         this.getChildren().add(hardSong2);
@@ -386,117 +457,219 @@ public class LevelSelect extends Pane {
         hardSong2.setMinSize(500, 80);
         hardSong2.setOnMouseEntered(event -> {
             hoversound();
+            hardSong2.setMinSize(600, 80);
         });
 
         hardSong2.setOnMouseExited(event -> {
+            hardSong2.setMinSize(500, 80);
         });
 
+        topBorderRect.setWidth(1250);
+        topBorderRect.setHeight(35);
+        topBorderRect.setLayoutX(0);
+        topBorderRect.setLayoutY(0);
+        topBorderRect.setFill(Color.rgb(10, 10, 10));
+        topBorderRect.setStroke(Color.BLACK);
+        topBorderRect.setStrokeWidth(10);
+        topBorderRect.setOpacity(1);
+        this.getChildren().add(topBorderRect);
+
+        bottomBorderRect.setWidth(1250);
+        bottomBorderRect.setHeight(80);
+        bottomBorderRect.setLayoutX(0);
+        bottomBorderRect.setLayoutY(570);
+        bottomBorderRect.setFill(Color.rgb(10, 10, 10));
+        bottomBorderRect.setStroke(Color.BLACK);
+        bottomBorderRect.setStrokeWidth(10);
+        bottomBorderRect.setOpacity(1);
+        this.getChildren().add(bottomBorderRect);
+
+        infoRect.setWidth(600);
+        infoRect.setHeight(630);
+        infoRect.setOpacity(0.75);
+        infoRect.setLayoutX(850);
+        infoRect.setLayoutY(10);
+        infoRect.setFill(Color.GREEN);
+        infoRect.setStroke(Color.BLACK);
+        infoRect.setStrokeWidth(10);
+        infoRect.setArcWidth(50);
+        infoRect.setArcHeight(50);
+        this.getChildren().add(infoRect);
+
+        ImageView bpmIcon = new ImageView(new Image("music-note.png"));
+        bpmIcon.setFitWidth(80);
+        bpmIcon.setPreserveRatio(true);
+        bpmIcon.setLayoutX(880);
+        bpmIcon.setLayoutY(110);
+        this.getChildren().add(bpmIcon);
+
+        bpmText.setText("BPM: " + "???");
+        bpmText.setLayoutX(980);
+        bpmText.setLayoutY(170);
+        getChildren().add(bpmText);
+
+        ImageView durationIcon = new ImageView(new Image("clock.png"));
+        durationIcon.setFitWidth(80);
+        durationIcon.setPreserveRatio(true);
+        durationIcon.setLayoutX(880);
+        durationIcon.setLayoutY(240);
+        this.getChildren().add(durationIcon);
+
+        durationText.setText("Duration: \n" + "?:??");
+        durationText.setLayoutX(980);
+        durationText.setLayoutY(270);
+        getChildren().add(durationText);
+
+        ImageView difficultyIcon = new ImageView(new Image("star.png"));
+        difficultyIcon.setFitWidth(80);
+        difficultyIcon.setPreserveRatio(true);
+        difficultyIcon.setLayoutX(880);
+        difficultyIcon.setLayoutY(365);
+        this.getChildren().add(difficultyIcon);
+
+        difficultyInfoText.setText("Difficulty: " + "?");
+        difficultyInfoText.setLayoutX(980);
+        difficultyInfoText.setLayoutY(430);
+        getChildren().add(difficultyInfoText);
+
+        diffStar1 = new ImageView(new Image("starHollow.png"));
+        diffStar1.setFitWidth(60);
+        diffStar1.setPreserveRatio(true);
+        diffStar1.setLayoutX(880);
+        diffStar1.setLayoutY(500);
+        this.getChildren().add(diffStar1);
+
+        diffStar2 = new ImageView(new Image("starHollow.png"));
+        diffStar2.setFitWidth(60);
+        diffStar2.setPreserveRatio(true);
+        diffStar2.setLayoutX(950);
+        diffStar2.setLayoutY(500);
+        this.getChildren().add(diffStar2);
+
+        diffStar3 = new ImageView(new Image("starHollow.png"));
+        diffStar3.setFitWidth(60);
+        diffStar3.setPreserveRatio(true);
+        diffStar3.setLayoutX(1020);
+        diffStar3.setLayoutY(500);
+        this.getChildren().add(diffStar3);
+
+        diffStar4 = new ImageView(new Image("starHollow.png"));
+        diffStar4.setFitWidth(60);
+        diffStar4.setPreserveRatio(true);
+        diffStar4.setLayoutX(1090);
+        diffStar4.setLayoutY(500);
+        this.getChildren().add(diffStar4);
+
+        diffStar5 = new ImageView(new Image("starHollow.png"));
+        diffStar5.setFitWidth(60);
+        diffStar5.setPreserveRatio(true);
+        diffStar5.setLayoutX(1160);
+        diffStar5.setLayoutY(500);
+        this.getChildren().add(diffStar5);
+
         this.getChildren().add(hardcore);
-        hardcore.setLayoutX(475);
-        hardcore.setLayoutY(310);
-        hardcore.setMinSize(100, 40);
-        hardcore.setMaxSize(100, 40);
-        hardcore.setStyle(hardcoreStyleNormal);
+        hardcore.setText("Hardcore: " + "OFF");
+        hardcore.setLayoutX(260);
+        hardcore.setLayoutY(590);
+        hardcore.setMinSize(120, 40);
         hardcore.setOnMouseEntered(event -> {
             hoversound();
-            hardcore.setStyle(hardcoreStyleBig);
+            hardcore.setLayoutX(255);
+            hardcore.setLayoutY(585);
+            hardcore.setMinSize(130, 50);
         });
 
         hardcore.setOnMouseExited(event -> {
-            hardcore.setStyle(hardcoreStyleNormal);
+            hardcore.setLayoutX(260);
+            hardcore.setLayoutY(590);
+            hardcore.setMinSize(120, 40);
         });
-    
+
         hardcore.setOnAction(event -> {
             hoversound();
             if (hardcoreDiff == false) {
                 hardcoreDiff = true;
-                hardcoreStatus.setText("Hardcore: " + "ON");
-            } else {
+                hardcore.setText("Hardcore: " + "ON");
+            } else if (hardcoreDiff == true) {
                 hardcoreDiff = false;
-                hardcoreStatus.setText("Hardcore: " + "OFF");
+                hardcore.setText("Hardcore: " + "OFF");
             }
         });
 
-        this.getChildren().add(hardcoreStatus);
-        hardcoreStatus.setLayoutX(485);
-        hardcoreStatus.setLayoutY(290);
-        hardcoreStatus.setStyle("-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; -fx-text-fill: white;");
-
         this.getChildren().add(chaos);
-        chaos.setLayoutX(475);
-        chaos.setLayoutY(350);
-        chaos.setMinSize(100, 40);
-        chaos.setMaxSize(100, 40);
-        chaos.setStyle(chaosStyleNormal);
+        chaos.setText("Chaos: " + "OFF");
+        chaos.setLayoutX(450);
+        chaos.setLayoutY(590);
+        chaos.setMinSize(120, 40);
         chaos.setOnMouseEntered(event -> {
             hoversound();
-            chaos.setStyle(chaosStyleBig);
+            chaos.setLayoutX(445);
+            chaos.setLayoutY(585);
+            chaos.setMinSize(130, 50);
         });
 
         chaos.setOnMouseExited(event -> {
-            chaos.setStyle(chaosStyleNormal);
+            chaos.setLayoutX(450);
+            chaos.setLayoutY(590);
+            chaos.setMinSize(120, 40);
         });
 
         chaos.setOnAction(event -> {
             hoversound();
             if (chaosDiff == false) {
                 chaosDiff = true;
-                chaosStatus.setText("Chaos: " + "ON");
-            } else {
+                chaos.setText("Chaos: " + "ON");
+            } else if (chaosDiff == true) {
                 chaosDiff = false;
-                chaosStatus.setText("Chaos: " + "OFF");
+                chaos.setText("Chaos: " + "OFF");
             }
         });
 
-        this.getChildren().add(chaosStatus);
-        chaosStatus.setLayoutX(485);
-        chaosStatus.setLayoutY(330);
-        chaosStatus.setStyle("-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; -fx-text-fill: white;");
-
         this.getChildren().add(noFail);
-        noFail.setLayoutX(475);
-        noFail.setLayoutY(390);
-        noFail.setMinSize(100, 40);
-        noFail.setMaxSize(100, 40);
-        noFail.setStyle(noFailStyleNormal);
+        noFail.setText("No Fail: " + "OFF");
+        noFail.setLayoutX(640);
+        noFail.setLayoutY(590);
+        noFail.setMinSize(120, 40);
         noFail.setOnMouseEntered(event -> {
             hoversound();
-            noFail.setStyle(noFailStyleBig);
+            noFail.setLayoutX(635);
+            noFail.setLayoutY(585);
+            noFail.setMinSize(130, 50);
         });
 
         noFail.setOnMouseExited(event -> {
-            noFail.setStyle(noFailStyleNormal);
+            noFail.setLayoutX(640);
+            noFail.setLayoutY(590);
+            noFail.setMinSize(120, 40);
         });
 
         noFail.setOnAction(event -> {
             hoversound();
             if (infiniteHealth == false) {
                 infiniteHealth = true;
-                noFailStatus.setText("No Fail: " + "ON");
-            } else {
+                noFail.setText("No Fail: " + "ON");
+            } else if (infiniteHealth == true) {
                 infiniteHealth = false;
-                noFailStatus.setText("No Fail: " + "OFF");
+                noFail.setText("No Fail: " + "OFF");
             }
         });
 
-        this.getChildren().add(noFailStatus);
-        noFailStatus.setLayoutX(485);
-        noFailStatus.setLayoutY(370);
-        noFailStatus.setStyle("-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; -fx-text-fill: white;");
-
         this.getChildren().add(returnToMenuButton);
-        returnToMenuButton.setLayoutX(475);
-        returnToMenuButton.setLayoutY(430);
-        returnToMenuButton.setMinSize(100, 40);
-        returnToMenuButton.setMaxSize(100, 40);
-        returnToMenuButton.setStyle(menuButtonStyleNormal);
+        returnToMenuButton.setText("Return");
+        returnToMenuButton.setLayoutX(75);
+        returnToMenuButton.setLayoutY(590);
+        returnToMenuButton.setMinSize(120, 40);
         returnToMenuButton.setOnMouseEntered(event -> {
             hoversound();
-            returnToMenuButton.setStyle(menuButtonStyleBig);
+            returnToMenuButton.setLayoutX(70);
+            returnToMenuButton.setLayoutY(585);
+            returnToMenuButton.setMinSize(130, 50);
         });
 
         returnToMenuButton.setOnMouseExited(event -> {
-            returnToMenuButton.setStyle(menuButtonStyleNormal);
+            returnToMenuButton.setLayoutX(75);
+            returnToMenuButton.setLayoutY(590);
+            returnToMenuButton.setMinSize(120, 40);
         });
 
         returnToMenuButton.setOnAction(event -> {
@@ -507,30 +680,29 @@ public class LevelSelect extends Pane {
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(mainMenuScene);
         });
-                  
 
     }
 
-    //getter for hardcoreDiff
+    // getter for hardcoreDiff
     public static boolean getHardcoreDiff() {
         return hardcoreDiff;
     }
 
-    //getter for chaosDiff
+    // getter for chaosDiff
     public static boolean getChaosDiff() {
         return chaosDiff;
     }
 
-    //getter for infiniteHealth
+    // getter for infiniteHealth
     public static boolean getInfiniteHealth() {
         return infiniteHealth;
     }
 
-    //getter for songVideo
+    // getter for songVideo
     public static String getSongVideo() {
         return songVideo;
     }
-    
+
     public void hoversound() {
         String s = "src/main/resources/2.wav";
         Media h = new Media(Paths.get(s).toUri().toString());
@@ -571,15 +743,17 @@ public class LevelSelect extends Pane {
 
     public void levelSelectVideo() {
         if (mediaVideoPlayer != null) {
-            this.setStyle("-fx-background-color: black; -fx-background-size: 1250, 650; -fx-background-position: 0, 0;");
+            this.setStyle("-fx-background-color: gray; -fx-background-size: 1250, 650; -fx-background-position: 0, 0;");
             mediaVideoPlayer.stop();
             mediaVideoPlayer.dispose();
-        };
+        }
+        ;
         Media mediaVideo = new Media(Paths.get("src/main/resources/" + songVideo).toUri().toString());
         mediaVideoPlayer = new MediaPlayer(mediaVideo);
         MediaView mediaVideoView = new MediaView(mediaVideoPlayer);
-        mediaVideoView.setOpacity(0.8);
+        mediaVideoView.setOpacity(0.4);
         mediaVideoPlayer.setAutoPlay(true);
+        mediaVideoPlayer.setVolume(0);
         mediaVideoPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaVideoView.setFitWidth(1250);
         mediaVideoView.setFitHeight(750);
@@ -592,10 +766,33 @@ public class LevelSelect extends Pane {
     public boolean areTransitionsRunning() {
         boolean transitionsRunning = false;
         // THERE IS 100% A BETTER WAY TO DO THIS BUT I DON'T KNOW HOW
-        if (easy1Transition.getStatus() == Animation.Status.RUNNING || easy2Transition.getStatus() == Animation.Status.RUNNING || med1Transition.getStatus() == Animation.Status.RUNNING || med2Transition.getStatus() == Animation.Status.RUNNING || hard1Transition.getStatus() == Animation.Status.RUNNING || hard2Transition.getStatus() == Animation.Status.RUNNING) {
+        if (easy1Transition.getStatus() == Animation.Status.RUNNING
+                || easy2Transition.getStatus() == Animation.Status.RUNNING
+                || med1Transition.getStatus() == Animation.Status.RUNNING
+                || med2Transition.getStatus() == Animation.Status.RUNNING
+                || hard1Transition.getStatus() == Animation.Status.RUNNING
+                || hard2Transition.getStatus() == Animation.Status.RUNNING) {
             transitionsRunning = true;
         }
         return transitionsRunning;
     }
-    
+
+    public void updateInfo() {
+        bpmText.setText("BPM: " + songBPM);
+        durationText.setText("Duration: \n" + songDuration);
+        difficultyInfoText.setText("Difficulty: " + difficultyStars);
+
+        getChildren().removeAll(starsList);
+        starsList.clear();
+        for (int i = 0; i < difficultyStars; i++) {
+            ImageView star = new ImageView(new Image("star.png"));
+            star.setFitWidth(60);
+            star.setPreserveRatio(true);
+            star.setLayoutX(880 + (70 * i));
+            star.setLayoutY(500);
+            starsList.add(star);
+            this.getChildren().add(star);
+        }
+    }
+
 }

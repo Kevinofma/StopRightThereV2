@@ -19,5 +19,7 @@ public class EasyLvlButton extends Button {
         BackgroundFill fill = new BackgroundFill(Color.rgb(0, 250, 0, 0.5), new CornerRadii(5), Insets.EMPTY);
         super.setBackground(new Background(fill));
         super.setOpacity(1);
+        // give the button a drop shadow and a thick white border
+        super.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); -fx-border-color: black; -fx-border-width: 5px;");
     }
 }
