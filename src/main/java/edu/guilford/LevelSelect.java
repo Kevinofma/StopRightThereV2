@@ -20,12 +20,18 @@ public class LevelSelect extends Pane {
     private Button song6;
     private Button hardcore;
     private Label hardcoreStatus;
+    private Button chaos;
+    private Label chaosStatus;
+    private Button noFail;
+    private Label noFailStatus;
+    private Button menuButton;
     MediaPlayer mediaPlayer;
 
     static String songVideo;
     static String songFileName;
     static int songBPM;
     static int songDelay;
+    static double beatsToDelayOffset = 0; // weird glitch where if if you return to menu, the SRT! button is not on beat
 
     private static boolean hardcoreDiff = false;
     private static boolean chaosDiff = false;
@@ -81,8 +87,42 @@ public class LevelSelect extends Pane {
     "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
     "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
     "-fx-text-fill: white;";
-       
-
+    String chaosStyleNormal = "-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
+    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
+    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
+    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
+    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
+    "-fx-text-fill: white;";
+    String chaosStyleBig = "-fx-font-size: 16px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
+    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
+    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
+    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
+    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
+    "-fx-text-fill: white;";
+    String noFailStyleNormal = "-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
+    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
+    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
+    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
+    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
+    "-fx-text-fill: white;";
+    String noFailStyleBig = "-fx-font-size: 16px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
+    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
+    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
+    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
+    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
+    "-fx-text-fill: white;";       
+    String menuButtonStyleNormal = "-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
+    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
+    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
+    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
+    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
+    "-fx-text-fill: white;";
+    String menuButtonStyleBig = "-fx-font-size: 16px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; " +
+    "-fx-focus-color: transparent; -fx-border-color: black; -fx-border-width: 1px; " +
+    "-fx-background-radius: 2 2 2 2; -fx-background-color: black; " +
+    "-fx-border-style: solid; -fx-border-radius: 2 2 2 2; -fx-padding: 5px; " +
+    "-fx-border-insets: 2px; -fx-border-width: 1px; -fx-border-color: white; " +
+    "-fx-text-fill: white;";
     
     //constructor
     public LevelSelect() {
@@ -95,6 +135,11 @@ public class LevelSelect extends Pane {
         song6 = new Button(song6Name);
         hardcore = new Button("Hardcore");
         hardcoreStatus = new Label("Hardcore: " + "OFF");
+        chaos = new Button("Chaos");
+        chaosStatus = new Label("Chaos: " + "OFF");
+        noFail = new Button("No Fail");
+        noFailStatus = new Label("No Fail: " + "OFF");
+        menuButton = new Button("Back");
 
         // place the song1 button at x = 20, y = 20 with a width of 300 and a height of 40
         this.getChildren().add(song1);
@@ -122,6 +167,7 @@ public class LevelSelect extends Pane {
             songFileName = "FlowerDance.wav";
             songBPM = 100;
             songDelay = 44;
+            songWithVideo = false;
             Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(gameScene);
@@ -158,6 +204,7 @@ public class LevelSelect extends Pane {
             songFileName = "The_Stains_of_Time.wav";
             songBPM = 100;
             songDelay = 5;
+            songWithVideo = false;
             Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(gameScene);
@@ -303,8 +350,106 @@ public class LevelSelect extends Pane {
         hardcoreStatus.setLayoutX(485);
         hardcoreStatus.setLayoutY(290);
         hardcoreStatus.setStyle("-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; -fx-text-fill: white;");
-        
-        
+
+        // place the chaos button in the bottom right of the screen with a width of 100 and a height of 40
+        this.getChildren().add(chaos);
+        chaos.setLayoutX(475);
+        chaos.setLayoutY(350);
+        chaos.setMinSize(100, 40);
+        chaos.setMaxSize(100, 40);
+        chaos.setStyle(chaosStyleNormal);
+        // make the chaos button make a sound when it is hovered over and change font
+        chaos.setOnMouseEntered(event -> {
+            hoversound();
+            chaos.setStyle(chaosStyleBig);
+        });
+
+        // make the chaos button change back to normal when the mouse is no longer hovering over it
+        chaos.setOnMouseExited(event -> {
+            chaos.setStyle(chaosStyleNormal);
+        });
+
+        // make the chaos button change chaosDiff to true/false when it is clicked and change the text of chaosStatus to "Chaos: ON/OFF"
+        chaos.setOnAction(event -> {
+            hoversound();
+            if (chaosDiff == false) {
+                chaosDiff = true;
+                chaosStatus.setText("Chaos: " + "ON");
+            } else {
+                chaosDiff = false;
+                chaosStatus.setText("Chaos: " + "OFF");
+            }
+        });
+
+        // put a label above the chaos button that says "Chaos"
+        this.getChildren().add(chaosStatus);
+        chaosStatus.setLayoutX(485);
+        chaosStatus.setLayoutY(330);
+        chaosStatus.setStyle("-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        // place the noFail button in the bottom right of the screen with a width of 100 and a height of 40
+        this.getChildren().add(noFail);
+        noFail.setLayoutX(475);
+        noFail.setLayoutY(390);
+        noFail.setMinSize(100, 40);
+        noFail.setMaxSize(100, 40);
+        noFail.setStyle(noFailStyleNormal);
+        // make the noFail button make a sound when it is hovered over and change font
+        noFail.setOnMouseEntered(event -> {
+            hoversound();
+            noFail.setStyle(noFailStyleBig);
+        });
+
+        // make the noFail button change back to normal when the mouse is no longer hovering over it
+        noFail.setOnMouseExited(event -> {
+            noFail.setStyle(noFailStyleNormal);
+        });
+
+        // make the noFail button change infiniteHealth to true/false when it is clicked and change the text of noFailStatus to "No Fail: ON/OFF"
+        noFail.setOnAction(event -> {
+            hoversound();
+            if (infiniteHealth == false) {
+                infiniteHealth = true;
+                noFailStatus.setText("No Fail: " + "ON");
+            } else {
+                infiniteHealth = false;
+                noFailStatus.setText("No Fail: " + "OFF");
+            }
+        });
+
+        // put a label above the noFail button that says "No Fail"
+        this.getChildren().add(noFailStatus);
+        noFailStatus.setLayoutX(485);
+        noFailStatus.setLayoutY(370);
+        noFailStatus.setStyle("-fx-font-size: 12px; -fx-font-family: 'Dialog'; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        // place the menuButton above the hardcore button with a width of 100 and a height of 40
+        this.getChildren().add(menuButton);
+        menuButton.setLayoutX(475);
+        menuButton.setLayoutY(430);
+        menuButton.setMinSize(100, 40);
+        menuButton.setMaxSize(100, 40);
+        menuButton.setStyle(menuButtonStyleNormal);
+        // make the menuButton make a sound when it is hovered over and change font
+        menuButton.setOnMouseEntered(event -> {
+            hoversound();
+            menuButton.setStyle(menuButtonStyleBig);
+        });
+
+        // make the menuButton change back to normal when the mouse is no longer hovering over it
+        menuButton.setOnMouseExited(event -> {
+            menuButton.setStyle(menuButtonStyleNormal);
+        });
+
+        // make the menuButton change the scene to the main menu when it is clicked
+        menuButton.setOnAction(event -> {
+            hoversound();
+            StartMenuPane.mainMenuPlayer.stop();
+            beatsToDelayOffset = -1.5;
+            Scene mainMenuScene = new Scene(new StartMenuPane(), 1250, 650);
+            Stage Stage = (Stage) this.getScene().getWindow();
+            Stage.setScene(mainMenuScene);
+        });
            
         //set the background to levelSelectBackground.jpg
         this.setStyle("-fx-background-image: url('levelSelectBackground.jpg'); -fx-background-size: 585, 360; -fx-background-position: 0, 0;");
@@ -354,6 +499,14 @@ public class LevelSelect extends Pane {
 
     public static boolean getSongWithVideo() {
         return songWithVideo;
+    }
+
+    public static double getBeatsToDelayOffset() {
+        return beatsToDelayOffset;
+    }
+
+    public static void setBeatsToDelayOffset(double beatsToDelayOffset) {
+        LevelSelect.beatsToDelayOffset = beatsToDelayOffset;
     }
     
 }

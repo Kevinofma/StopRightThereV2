@@ -13,7 +13,7 @@ public class CountdownText extends Text{
         super.setFill(Color.WHITE);
         // give the text a thick pink border
         super.setStroke(Color.PINK);
-        super.setStrokeWidth(3);
+        super.setStrokeWidth(10);
         super.setOpacity(1);
     }
 }

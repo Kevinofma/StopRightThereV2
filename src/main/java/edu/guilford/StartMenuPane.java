@@ -2,6 +2,7 @@ package edu.guilford;
 
 import java.nio.file.Paths;
 
+import TutorialSlideShow.Tutorial;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -30,7 +31,7 @@ public class StartMenuPane extends Pane {
     private Button startButton;
     private Button tutorialButton;
     MediaPlayer mediaPlayer;
-    static MediaPlayer mainMenuPlayer;
+    public static MediaPlayer mainMenuPlayer;
     static MediaPlayer mediaVideoPlayer;
     boolean logoOut = false;
     TranslateTransition logoTransition;
@@ -105,7 +106,7 @@ public class StartMenuPane extends Pane {
 
         double bpm = 140;
         double beatDuration = (60000 / bpm);
-        double beatsToDelay = 11.5;
+        double beatsToDelay = 11.5 + LevelSelect.getBeatsToDelayOffset();
 
         ScaleTransition pulseTransition = new ScaleTransition(Duration.millis(beatDuration), logoButton);
         pulseTransition.setFromX(1.2);
@@ -185,7 +186,7 @@ public class StartMenuPane extends Pane {
         startButton.setOnAction(event -> {
             // Create a new instance of the Scene class and set it as the active scene
             hoversound();
-            Scene levelSelectScene = new Scene(new LevelSelect(), 585, 360);
+            Scene levelSelectScene = new Scene(new LevelSelect(), 585, 450);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(levelSelectScene);
         });
