@@ -186,7 +186,7 @@ public class StartMenuPane extends Pane {
         startButton.setOnAction(event -> {
             // Create a new instance of the Scene class and set it as the active scene
             hoversound();
-            Scene levelSelectScene = new Scene(new LevelSelect(), 585, 450);
+            Scene levelSelectScene = new Scene(new LevelSelect(), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(levelSelectScene);
         });
@@ -209,7 +209,7 @@ public class StartMenuPane extends Pane {
         tutorialButton.setOnAction(event -> {
             // Create a new instance of the Scene class and set it as the active scene
             hoversound();
-            Scene infoScene = new Scene(new Tutorial(), 640, 480);
+            Scene infoScene = new Scene(new Tutorial(), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(infoScene);
         });
@@ -254,6 +254,7 @@ public class StartMenuPane extends Pane {
         mediaVideoPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaVideoView.setFitWidth(1250);
         mediaVideoView.setFitHeight(750);
+        mediaVideoPlayer.setOnEndOfMedia(() -> mediaVideoPlayer.seek(Duration.ZERO));
         mediaVideoPlayer.play();
         getChildren().add(mediaVideoView);
     }

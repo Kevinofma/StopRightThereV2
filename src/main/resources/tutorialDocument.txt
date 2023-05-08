@@ -1,0 +1,8 @@
+Controls: esc to pause
+Game:
+When song starts there will be a countdown until the game starts
+There is a bar on the right side that tells you how much time is left in a song
+At the top, there is a health bar that decreases over time
+When you miss a note, health will decrease, hitting a note increases the health
+At the top right, your score and accuracy is tracked
+

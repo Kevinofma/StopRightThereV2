@@ -120,10 +120,18 @@ import javafx.util.Duration;
 // * Added back button to level select and prepared level select for full revamp
 // * fixed a bug where SRT! button would be off beat if menu was created from level select or tutorial
 // * Added back button to tutorial and prepared tutorial for full revamp
+// * BUG FIX: FIX DYNAMITE VIDEO PLAYING CREDITS AT THE END OF THE SONG
 
 // TO-DO LIST: (copy and paste into features when finished)
-// * BUG FIX: FIX DYNAMITE VIDEO PLAYING CREDITS AT THE END OF THE SONG
-// program game over animation and score card
+// ** Level Select Revamp:
+// create arrow buttons at the bottom to switch between the difficulty levels
+// the levels are displayed on the side
+// when switching difficulties, the levels on screen are moved off screen and the next difficulty levels are moved from off screen to on screen
+// make this animation smooth and have overshoot
+// when you hover over a level, change the background to the level's background
+// create an arrow button pointing towards the right side of the screen
+// when the button is clicked, pop out a side bar that contains the game modes and return to main menu button
+// * program game over animation and score card
 
 // TO - MAYBE - DO LIST:
 // and more splash text maybe?
