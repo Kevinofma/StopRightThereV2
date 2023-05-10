@@ -97,7 +97,7 @@ public class ScoreCard extends Pane {
         score = 500000;
         songName = "Song Name";
         difficulty = "Difficulty";
-        accuracy = 98.345252;
+        accuracy = 83.4;
         hits = 1000;
         misses = 58;
         mods = "Hardcore Chaos";
@@ -488,7 +488,7 @@ public class ScoreCard extends Pane {
         String s = "src/main/resources/goodSound.mp3";
         Media h = new Media(Paths.get(s).toUri().toString());
         MediaPlayer goodPlayer = new MediaPlayer(h);
-        goodPlayer.setVolume(0.5 * GamePane.getVolumeLevel());
+        goodPlayer.setVolume(2 * GamePane.getVolumeLevel());
         goodPlayer.play();
         Timeline checkGood = new Timeline(new KeyFrame(Duration.millis(100), e -> {
             goodPlayer.getStatus();
@@ -501,7 +501,7 @@ public class ScoreCard extends Pane {
         String s = "src/main/resources/failSound.mp3";
         Media h = new Media(Paths.get(s).toUri().toString());
         MediaPlayer failPlayer = new MediaPlayer(h);
-        failPlayer.setVolume(0.5 * GamePane.getVolumeLevel());
+        failPlayer.setVolume(1 * GamePane.getVolumeLevel());
         failPlayer.play();
         Timeline checkFail = new Timeline(new KeyFrame(Duration.millis(100), e -> {
             failPlayer.getStatus();

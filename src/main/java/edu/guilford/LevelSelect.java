@@ -16,7 +16,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import menuassets.MenuButton;
-import menuassets.InfoText;
+import menuassets.InfoTrext;
 import menuassets.ArrowButton;
 import menuassets.DifficultyText;
 import menuassets.EasyLvlButton;
@@ -88,9 +88,9 @@ public class LevelSelect extends Pane {
     DifficultyText easyText;
     DifficultyText medText;
     DifficultyText hardText;
-    InfoText bpmText;
-    InfoText durationText;
-    InfoText difficultyInfoText;
+    InfoTrext bpmText;
+    InfoTrext durationText;
+    InfoTrext difficultyInfoText;
 
     ImageView diffStar1;
     ImageView diffStar2;
@@ -142,9 +142,9 @@ public class LevelSelect extends Pane {
         infoRect = new InfoRectangle();
         topBorderRect = new Rectangle();
         bottomBorderRect = new Rectangle();
-        bpmText = new InfoText("BPM: ");
-        durationText = new InfoText("Duration: ");
-        difficultyInfoText = new InfoText("Difficulty: ");
+        bpmText = new InfoTrext("BPM: ");
+        durationText = new InfoTrext("Duration: ");
+        difficultyInfoText = new InfoTrext("Difficulty: ");
         hardcore = new MenuButton();
         chaos = new MenuButton();
         noFail = new MenuButton();
