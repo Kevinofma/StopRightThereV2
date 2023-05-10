@@ -1,6 +1,7 @@
 package TutorialSlideShow;
 
 import edu.guilford.LevelSelect;
+import edu.guilford.ScoreCard;
 import edu.guilford.StartMenuPane;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -15,6 +16,8 @@ import menuassets.MenuButton;
 public class Tutorial extends Pane{
 
     private MenuButton mainMenuButton;
+    private MenuButton exampleScoreButton;
+    private static boolean exampleScore = false;
 
     //constructor
     public Tutorial() {
@@ -29,11 +32,39 @@ public class Tutorial extends Pane{
 
         mainMenuButton.setOnAction(event -> {
             StartMenuPane.mainMenuPlayer.stop();
-            LevelSelect.setBeatsToDelayOffset(-2);
+            LevelSelect.setBeatsToDelayOffset(-1.5);
+            // LevelSelect.setBeatsToDelayOffset(-2);
             Scene mainMenuScene = new Scene(new StartMenuPane(), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(mainMenuScene);
         });
 
+        exampleScoreButton = new MenuButton();
+        exampleScoreButton.setText("Example Score Card");
+        exampleScoreButton.setLayoutX(1100);
+        exampleScoreButton.setLayoutY(600);
+        this.getChildren().add(exampleScoreButton);
+
+        exampleScoreButton.setOnAction(event -> {
+            StartMenuPane.mainMenuPlayer.stop();
+            exampleScore = true;
+            Scene scoreScene = new Scene(new ScoreCard(), 1250, 650);
+            Stage Stage = (Stage) this.getScene().getWindow();
+            Stage.setScene(scoreScene);
+        });
+
+
+
+
+    }
+
+    // getter for exampleScore
+    public static boolean getExampleScore() {
+        return exampleScore;
+    }
+
+    // setter for exampleScore
+    public static void setExampleScore(boolean exampleScore) {
+        Tutorial.exampleScore = exampleScore;
     }
 }

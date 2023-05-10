@@ -40,7 +40,7 @@ public class LevelSelect extends Pane {
     MediaPlayer slidePlayer;
 
     static String songVideo = "MainMenuBackground.mp4";
-    static String songFileName;
+    static String songFileName = "MeltyBloodMainMenuMusic.mp3";
     static int songBPM;
     static String songDuration;
     static int difficultyStars;
@@ -51,15 +51,15 @@ public class LevelSelect extends Pane {
     private static boolean hardcoreDiff = false;
     private static boolean chaosDiff = false;
     private static boolean infiniteHealth = false;
-    private static boolean songWithVideo = false;
+    private static boolean songWithVideo;
 
     static String songName;
-    String song1EasyName = "Life is a Highway";
-    String song2EasyName = "The Stains of Time";
-    String song1MedName = "Dynamite";
-    String song2MedName = "Placeholder";
-    String song1HardName = "Placeholder";
-    String song2HardName = "Placeholder";
+    String song1EasyName;
+    String song2EasyName;
+    String song1MedName;
+    String song2MedName;
+    String song1HardName;
+    String song2HardName;
 
     MediaPlayer mediaVideoPlayer;
     TranslateTransition easy1Transition;
@@ -73,9 +73,9 @@ public class LevelSelect extends Pane {
     TranslateTransition hardTextTransition;
 
     static String difficulty;
-    static boolean easyDiff = true;
-    static boolean medDiff = false;
-    static boolean hardDiff = false;
+    static boolean easyDiff;
+    static boolean medDiff;
+    static boolean hardDiff;
     boolean transitionsRunning = false;
 
     ArrowButton previousMenuButton;
@@ -99,12 +99,32 @@ public class LevelSelect extends Pane {
     ImageView diffStar5;
     ArrayList<ImageView> starsList = new ArrayList<ImageView>(); // adapted from lines arrayList in GamePane.java
 
+    MediaPlayer mediaSongPlayer;
+
     // constructor
     public LevelSelect() {
 
-        this.setStyle("-fx-background-image: url('MainMenuWallpaper.jpg'); -fx-background-size: 1250, 650; -fx-background-position: 0, 0;");
-        // this.setStyle("-fx-background-image: url('LevelSelectBlueprint.PNG'); -fx-background-size: 1250, 650; -fx-background-position: 0, 0;");
+        this.setStyle(
+                "-fx-background-image: url('MainMenuWallpaper.jpg'); -fx-background-size: 1250, 650; -fx-background-position: 0, 0;");
+        // this.setStyle("-fx-background-image: url('LevelSelectBlueprint.PNG');
+        // -fx-background-size: 1250, 650; -fx-background-position: 0, 0;");
         levelSelectVideo();
+        levelSelectSong();
+
+        songVideo = "MainMenuBackground.mp4";
+        songFileName = "MeltyBloodMainMenuMusic.mp3";
+        songWithVideo = false;
+
+        song1EasyName = "Life is a Highway";
+        song2EasyName = "The Stains of Time";
+        song1MedName = "Dynamite";
+        song2MedName = "Placeholder";
+        song1HardName = "Placeholder";
+        song2HardName = "Placeholder";
+
+        easyDiff = true;
+        medDiff = false;
+        hardDiff = false;
 
         hardcoreDiff = false;
         chaosDiff = false;
@@ -338,6 +358,8 @@ public class LevelSelect extends Pane {
             hoversound();
             songVideo = "HighwaySong.mp4";
             levelSelectVideo();
+            songFileName = "HighwaySong.mp4";
+            levelSelectSong();
             easySong1.setMinSize(600, 80);
             songBPM = 103;
             songDuration = "4:30";
@@ -351,6 +373,11 @@ public class LevelSelect extends Pane {
 
         easySong1.setOnAction(event -> {
             hoversound();
+            if (mediaSongPlayer != null) {
+                System.out.println("Stopped Level Select music");
+                mediaSongPlayer.stop();
+                mediaSongPlayer.dispose();
+            }
             StartMenuPane.stopThreads();
             songVideo = "HighwaySong.mp4";
             songFileName = "HighwaySong.mp4";
@@ -371,6 +398,8 @@ public class LevelSelect extends Pane {
             hoversound();
             songVideo = "StainsOfTimeVideo.mp4";
             levelSelectVideo();
+            songFileName = "The_Stains_of_Time.wav";
+            levelSelectSong();
             easySong2.setMinSize(600, 80);
             songBPM = 100;
             songDuration = "2:10";
@@ -384,6 +413,11 @@ public class LevelSelect extends Pane {
 
         easySong2.setOnAction(event -> {
             hoversound();
+            if (mediaSongPlayer != null) {
+                System.out.println("Stopped Level Select music");
+                mediaSongPlayer.stop();
+                mediaSongPlayer.dispose();
+            }
             StartMenuPane.stopThreads();
             songVideo = "StainsOfTimeVideo.mp4";
             songFileName = "The_Stains_of_Time.wav";
@@ -404,6 +438,8 @@ public class LevelSelect extends Pane {
             hoversound();
             songVideo = "DynamiteVideo.mp4";
             levelSelectVideo();
+            songFileName = "DynamiteVideo.mp4";
+            levelSelectSong();
             medSong1.setMinSize(600, 80);
             songBPM = 120;
             songDuration = "3:21";
@@ -417,6 +453,11 @@ public class LevelSelect extends Pane {
 
         medSong1.setOnAction(event -> {
             hoversound();
+            if (mediaSongPlayer != null) {
+                System.out.println("Stopped Level Select music");
+                mediaSongPlayer.stop();
+                mediaSongPlayer.dispose();
+            }
             StartMenuPane.stopThreads();
             songVideo = "DynamiteVideo.mp4";
             songFileName = "DynamiteVideo.mp4";
@@ -678,8 +719,14 @@ public class LevelSelect extends Pane {
 
         returnToMenuButton.setOnAction(event -> {
             hoversound();
+            if (mediaSongPlayer != null) {
+                System.out.println("Stopped Level Select music");
+                mediaSongPlayer.stop();
+                mediaSongPlayer.dispose();
+            }
             StartMenuPane.mainMenuPlayer.stop();
-            beatsToDelayOffset = -2;
+            beatsToDelayOffset = -1.5;
+            // beatsToDelayOffset = -2;
             Scene mainMenuScene = new Scene(new StartMenuPane(), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(mainMenuScene);
@@ -767,6 +814,23 @@ public class LevelSelect extends Pane {
         this.getChildren().add(0, mediaVideoView);
     }
 
+    public void levelSelectSong() {
+        StartMenuPane.stopMainMenuMusic();
+        if (mediaSongPlayer != null) {
+            System.out.println("Stopped Level Select music");
+            mediaSongPlayer.stop();
+            mediaSongPlayer.dispose();
+        }
+        Media mediaSong = new Media(Paths.get("src/main/resources/" + songFileName).toUri().toString());
+        mediaSongPlayer = new MediaPlayer(mediaSong);
+        mediaSongPlayer.setAutoPlay(true);
+        mediaSongPlayer.setVolume(0.5 * GamePane.getVolumeLevel());
+        mediaSongPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaSongPlayer.setOnEndOfMedia(() -> mediaSongPlayer.seek(Duration.ZERO));
+        mediaSongPlayer.play();
+        System.out.println("Playing Level Select music");
+    }
+
     public boolean areTransitionsRunning() {
         boolean transitionsRunning = false;
         // THERE IS 100% A BETTER WAY TO DO THIS BUT I DON'T KNOW HOW
@@ -824,15 +888,15 @@ public class LevelSelect extends Pane {
         } else if (!hardcoreDiff && !chaosDiff && infiniteHealth) {
             mods = "No Fail";
         } else if (hardcoreDiff && chaosDiff && !infiniteHealth) {
-            mods = "Hardcore, Chaos";
+            mods = "Hardcore Chaos";
         } else if (hardcoreDiff && !chaosDiff && infiniteHealth) {
-            mods = "Hardcore, No Fail";
+            mods = "Hardcore No Fail";
         } else if (!hardcoreDiff && chaosDiff && infiniteHealth) {
-            mods = "Chaos, No Fail";
+            mods = "Chaos No Fail";
         } else if (hardcoreDiff && chaosDiff && infiniteHealth) {
-            mods = "Hardcore, Chaos, No Fail";
+            mods = "Hardcore Chaos No Fail";
         } else {
-            mods = "None";
+            mods = "";
         }
         return mods;
     }

@@ -106,7 +106,8 @@ public class StartMenuPane extends Pane {
 
         double bpm = 140;
         double beatDuration = (60000 / bpm);
-        double beatsToDelay = 12 + LevelSelect.getBeatsToDelayOffset();
+        //double beatsToDelay = 12 + LevelSelect.getBeatsToDelayOffset();
+        double beatsToDelay = 11.5 + LevelSelect.getBeatsToDelayOffset();
 
         ScaleTransition pulseTransition = new ScaleTransition(Duration.millis(beatDuration), logoButton);
         pulseTransition.setFromX(1.2);
@@ -212,6 +213,9 @@ public class StartMenuPane extends Pane {
             Scene infoScene = new Scene(new Tutorial(), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(infoScene);
+            // Scene ScoreCard = new Scene(new ScoreCard(), 1250, 650);
+            // Stage Stage = (Stage) this.getScene().getWindow();
+            // Stage.setScene(ScoreCard);
         });
 
         // make the info button make a sound when it is hovered over
@@ -243,6 +247,12 @@ public class StartMenuPane extends Pane {
         // set the volume to 50%
         mainMenuPlayer.setVolume(0.5 * GamePane.getVolumeLevel());
         mainMenuPlayer.play();
+    }
+
+    public static void stopMainMenuMusic() {
+        if (mainMenuPlayer != null) {
+        mainMenuPlayer.stop();
+        }
     }
 
     public void mainMenuVideo() {
