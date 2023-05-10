@@ -132,10 +132,16 @@ import javafx.util.Duration;
 // game mode buttons have been moved and polished
 // * improved combo level clause text visual after the javafx animation class on Tuesday
 // * improved note timing calculations to work with faster songs
-
+// * BUG FIX: restarting a level keeps the previous score before restarting
+// ** PROGRAMMED SCORE CARD AND ANIMATION
+// animated score card that shows each value 1 by 1
+// dynamic grading system and text style that changes based on score
+// dynamic cheering system depending on grade
+// * improved level select by adding song/level previews
+// * added an example score card accessible from the tutorial
 
 // TO-DO LIST: (copy and paste into features when finished)
-// * program game over animation and score card
+// * Add more songs/levels
 
 // TO - MAYBE - DO LIST:
 // and more splash text maybe?
@@ -207,7 +213,7 @@ public class GamePane extends Pane {
     private AccuracyLabel accuracyLabel;
 
     private double remainingTime; // (in seconds)
-    private static double totalSongTime = 100; // random high value (in seconds)
+    private static double totalSongTime = 100; // random high value (in seconds) (not actual song length)
     private TimeRemainingBar timeBar;
     private int timeBarHeight = 575;
     private int refreshRate = 15;
@@ -220,6 +226,21 @@ public class GamePane extends Pane {
 
     // constructor
     public GamePane(String songVideo, String songFileName) {
+
+        bpm = LevelSelect.getBPM(); // beats per minute of the song
+        beatDuration = (60000 / bpm); // duration of a single beat in milliseconds
+        noteBuffer = 1000 * (100/bpm); // the amount of time before the beat that the button spawns, smaller buffer for higher bpm songs
+        beatsToDelay = LevelSelect.getSongDelay();
+        countdownValue = beatsToDelay + 1;
+        buttonCount = 1;
+        comboCounter = 0;
+        comboLevel = 0;
+        currentHealth = 100.0;
+        totalNumButtons = 0;
+        score = 0;
+        numHits = 0;
+        numMisses = 0;
+        accuracy = 0;
 
         hardcoreDiff = LevelSelect.getHardcoreDiff();
         chaosDiff = LevelSelect.getChaosDiff();
