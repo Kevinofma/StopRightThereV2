@@ -144,6 +144,7 @@ import javafx.util.Duration;
 // * Add more songs/levels
 
 // TO - MAYBE - DO LIST:
+// make the main menu pulse animation based on song time (should fix bugs)
 // and more splash text maybe?
 // only dim the video when the countdown is over
 // create a formula that gets where you clicked on the button and calculate how close you were to the center of the button, and store it as a value
@@ -164,13 +165,13 @@ public class GamePane extends Pane {
     double beatDuration = (60000 / bpm); // duration of a single beat in milliseconds
     double noteBuffer = 1000 * (100/bpm); // the amount of time before the beat that the button spawns, smaller buffer for higher bpm songs
     int beatsToDelay = LevelSelect.getSongDelay();
-    int countdownValue = beatsToDelay + 1;
+    int countdownValue = beatsToDelay + 1; // +1 so countdown doesn't display 0
     private CountdownText countdownText;
-    int buttonCount = 1;
-    boolean clicked = false;
+    int buttonCount = 1; // this is the number on the buttons that increase until the color change
+    boolean clicked = false; // when true, fade out transition and missing the note is false
     static int score = 0;
-    int comboCounter = 0;
-    int comboLevel = 0;
+    int comboCounter = 0; // combo count in the top left
+    int comboLevel = 0; // the clause level
     private static final double HEALTH_BAR_WIDTH = 1250.0;
     private static final double HEALTH_BAR_HEIGHT = 20.0;
 
@@ -183,8 +184,8 @@ public class GamePane extends Pane {
 
     private static Timeline countdownTimeline;
 
-    private boolean isGamePaused = false;
-    private boolean pausedDuringStartup = false;
+    private boolean isGamePaused = false; // used for unpausing and pausing
+    private boolean pausedDuringStartup = false; // used to activate different pausing code if paused during ocuntdown
     Animation healthTimeline;
     Timeline gameLoop1;
     Timeline lateTimer;
