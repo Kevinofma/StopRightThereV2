@@ -106,7 +106,7 @@ public class StartMenuPane extends Pane {
 
         double bpm = 140;
         double beatDuration = (60000 / bpm);
-        double beatsToDelay = 11.5 + LevelSelect.getBeatsToDelayOffset();
+        double beatsToDelay = 12 + LevelSelect.getBeatsToDelayOffset();
 
         ScaleTransition pulseTransition = new ScaleTransition(Duration.millis(beatDuration), logoButton);
         pulseTransition.setFromX(1.2);
@@ -241,7 +241,7 @@ public class StartMenuPane extends Pane {
         Media h = new Media(Paths.get(s).toUri().toString());
         mainMenuPlayer = new MediaPlayer(h);
         // set the volume to 50%
-        mainMenuPlayer.setVolume(0.5);
+        mainMenuPlayer.setVolume(0.5 * GamePane.getVolumeLevel());
         mainMenuPlayer.play();
     }
 

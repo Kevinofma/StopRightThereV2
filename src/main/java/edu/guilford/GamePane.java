@@ -23,6 +23,7 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
 import javafx.animation.PauseTransition;
@@ -128,13 +129,17 @@ import javafx.util.Duration;
 // when switching difficulties, the levels on screen are moved off screen and the next difficulty levels are moved from off screen to on screen
 // when you hover over a level, change the background to the level's background
 // show infomation about the level when you hover over it on the left side
-// game mode buttons have been moved to the button and polished
+// game mode buttons have been moved and polished
+// * improved combo level clause text visual after the javafx animation class on Tuesday
+// * improved note timing calculations to work with faster songs
+
 
 // TO-DO LIST: (copy and paste into features when finished)
 // * program game over animation and score card
 
 // TO - MAYBE - DO LIST:
 // and more splash text maybe?
+// only dim the video when the countdown is over
 // create a formula that gets where you clicked on the button and calculate how close you were to the center of the button, and store it as a value
 // create a loading screen for each song that displays bpm, star difficult, song name, logo, etc
 
@@ -145,20 +150,19 @@ public class GamePane extends Pane {
     private Button previousButton = null; // used to store the values of the previous button so that a line can be drawn
                                           // from the previous button to the next button
     ArrayList<Line> lines = new ArrayList<>(); // List to store the line objects because theres a bug where the first
-                                               // line
-    // created wont clear so we clear the list instead of each line individually
+                                               // line created wont clear so we clear the list instead of each line individually
     private GameLine line;
     ArrayList<PathTransition> transitions = new ArrayList<>(); // List to store the path transitions
     private ScoreLabel scoreLabel;
     double bpm = LevelSelect.getBPM(); // beats per minute of the song
     double beatDuration = (60000 / bpm); // duration of a single beat in milliseconds
-    double noteBuffer = 500 * ((double) bpm / 100); // the amount of time before the beat that the button spawns
+    double noteBuffer = 1000 * (100/bpm); // the amount of time before the beat that the button spawns, smaller buffer for higher bpm songs
     int beatsToDelay = LevelSelect.getSongDelay();
     int countdownValue = beatsToDelay + 1;
     private CountdownText countdownText;
     int buttonCount = 1;
     boolean clicked = false;
-    int score = 0;
+    static int score = 0;
     int comboCounter = 0;
     int comboLevel = 0;
     private static final double HEALTH_BAR_WIDTH = 1250.0;
@@ -192,14 +196,14 @@ public class GamePane extends Pane {
     private Rectangle dimRectangle;
     private PausedHintText pauseHint;
 
-    private double volumeLevel = 1;
+    private static double volumeLevel = 0.5;
     private VolumeLabel volumeLabel;
     private Slider volumeSlider;
 
     int totalNumButtons = 0;
-    int numButtonsHit = 0;
-    int numButtonsMissed = 0;
-    double accuracy = 0;
+    static int numHits = 0;
+    static int numMisses = 0;
+    static double accuracy = 0;
     private AccuracyLabel accuracyLabel;
 
     private double remainingTime; // (in seconds)
@@ -208,6 +212,9 @@ public class GamePane extends Pane {
     private int timeBarHeight = 575;
     private int refreshRate = 15;
     Timeline barTimeline;
+
+    private static int maxCombo;
+    private static int maxClause;
 
     private boolean songWithVideo = LevelSelect.getSongWithVideo();
 
@@ -398,7 +405,7 @@ public class GamePane extends Pane {
         } else if (songWithVideo == true) {
             musicPlayer.setVolume(0);
         }
-        Timeline startMusic = new Timeline(new KeyFrame(Duration.millis(noteBuffer), e -> {
+        Timeline startMusic = new Timeline(new KeyFrame(Duration.millis(noteBuffer), e -> { // only the start the music after a note buffer so that the note is fully expanded on beat
             musicPlayer.play();
         }));
         startMusic.play();
@@ -503,7 +510,7 @@ public class GamePane extends Pane {
                     System.out.println(elapsedTime);
                     // if the difference is within the beat duration, then the player clicked the
                     // button on the beat
-                    if (elapsedTime < 1100 && elapsedTime > 600) {
+                    if (elapsedTime < noteBuffer + noteBuffer/3 && elapsedTime > noteBuffer - noteBuffer/3) {
                         // remove the button from the scene
                         getChildren().remove(gameButton);
                         // add a checkmark image to the location of the button
@@ -560,10 +567,11 @@ public class GamePane extends Pane {
 
                         // at every increment of 10 combo, increase the combo level
                         if (comboCounter >= 10 && comboCounter % 10 == 0) {
-                            // if (comboCounter >= 0) {
+                        //if (comboCounter >= 0) {
 
                             comboLevel++;
-                            if (comboLevel == 11) {
+                            calculateMaxClause();
+                            if (comboLevel >= 10) {
                                 comboLevel = 1;
                             }
                             combosound();
@@ -577,7 +585,7 @@ public class GamePane extends Pane {
                             comboLevelText.setStrokeWidth(3);
 
                             // place the combo Text at the center of the screen
-                            comboLevelText.setTranslateX(425);
+                            comboLevelText.setTranslateX(-400);
                             comboLevelText.setTranslateY(325);
                             comboLevelText.setOpacity(1);
                             getChildren().add(comboLevelText);
@@ -590,10 +598,21 @@ public class GamePane extends Pane {
                             if (comboLevel >= 1 && comboLevel <= 10) {
                                 comboLevelText.setText(comboLevelTexts[comboLevel - 1] + "   X " + comboCounter);
 
-                                FadeTransition fadeComboLevelText = new FadeTransition(Duration.millis(1000),
-                                        comboLevelText);
-                                fadeComboLevelText.setToValue(0);
-                                fadeComboLevelText.play();
+                                // FadeTransition fadeComboLevelText = new FadeTransition(Duration.millis(1000),
+                                //         comboLevelText);
+                                // fadeComboLevelText.setToValue(0);
+                                // fadeComboLevelText.play();
+
+                                KeyValue kvComboLevelSlide = new KeyValue(comboLevelText.translateXProperty(), 300);
+                                KeyFrame kfComboLevelSlide = new KeyFrame(Duration.millis(500), kvComboLevelSlide);
+                                KeyValue kvComboLevelSlide2 = new KeyValue(comboLevelText.translateXProperty(), 500);
+                                KeyFrame kfComboLevelSlide2 = new KeyFrame(Duration.millis(1500), kvComboLevelSlide2);
+                                KeyValue kvComboLevelSlide3 = new KeyValue(comboLevelText.translateXProperty(), 1300);
+                                KeyFrame kfComboLevelSlide3 = new KeyFrame(Duration.millis(2000), kvComboLevelSlide3);
+                                Timeline comboLevelSlide = new Timeline(kfComboLevelSlide, kfComboLevelSlide2,
+                                        kfComboLevelSlide3);
+                                comboLevelSlide.play();
+
                             }
 
                             // // Add a the combo image the buttons and fade it out
@@ -642,23 +661,18 @@ public class GamePane extends Pane {
                 }
             });
 
-            // Create a FadeTransition to fade in the button over 1 second
             FadeTransition fadeIn = new FadeTransition(Duration.millis(noteBuffer), gameButton);
             fadeIn.setFromValue(0.0);
             fadeIn.setToValue(1.0);
 
-            // Create a ScaleTransition to scale the button up to twice its size over 0.5
-            // seconds
             ScaleTransition scaleUp = new ScaleTransition(Duration.millis(noteBuffer), gameButton);
             scaleUp.setFromX(0);
             scaleUp.setFromY(0);
             scaleUp.setToX(1.0);
             scaleUp.setToY(1.0);
 
-            // Add the transitions to a ParallelTransition to play them simultaneously
             ParallelTransition parallelTransition = new ParallelTransition(gameButton, fadeIn, scaleUp);
 
-            // Start the transitions
             parallelTransition.play();
 
             // schedule the button to be removed after the beat
@@ -792,7 +806,8 @@ public class GamePane extends Pane {
             currentHealth = currentHealth + 5;
         }
         comboCounter++;
-        numButtonsHit++;
+        calculateMaxCombo();
+        numHits++;
         calculateAccuracy();
     }
 
@@ -811,7 +826,7 @@ public class GamePane extends Pane {
         comboCounter = 0;
         comboLevel = 0;
         currentHealth = currentHealth - 2;
-        numButtonsMissed++;
+        numMisses++;
         calculateAccuracy();
         if (hardcoreDiff) {
             endGame();
@@ -828,7 +843,7 @@ public class GamePane extends Pane {
         comboCounter = 0;
         comboLevel = 0;
         currentHealth = currentHealth - 3;
-        numButtonsMissed++;
+        numMisses++;
         calculateAccuracy();
         if (hardcoreDiff) {
             endGame();
@@ -837,7 +852,7 @@ public class GamePane extends Pane {
 
     public void calculateAccuracy() {
         // accuracy = ((double) numButtonsHit / totalNumButtons) * 100;
-        accuracy = ((double) numButtonsHit / (numButtonsHit + numButtonsMissed)) * 100;
+        accuracy = ((double) numHits / (numHits + numMisses)) * 100;
         DecimalFormat decimalFormat = new DecimalFormat("#.###");
         double roundedAccuracy = Double.parseDouble(decimalFormat.format(accuracy));
         accuracyLabel.setAccuracy(roundedAccuracy);
@@ -872,6 +887,7 @@ public class GamePane extends Pane {
 
         // Check if health reaches 0 and trigger endGame()
         if (currentHealth <= 0) {
+            numMisses = numMisses - 2; // subtract 2 misses that happen during the ending of the game
             endGame();
         }
     }
@@ -1013,9 +1029,9 @@ public class GamePane extends Pane {
     private void endGame() {
         endGameThreads();
         // place holder scene for the score card screen
-        Scene infoScene = new Scene(new Tutorial(), 640, 480);
+        Scene scoreScene = new Scene(new ScoreCard(), 1250, 650);
         Stage Stage = (Stage) this.getScene().getWindow();
-        Stage.setScene(infoScene);
+        Stage.setScene(scoreScene);
     }
 
     // create a restart game method
@@ -1056,4 +1072,47 @@ public class GamePane extends Pane {
         }
     }
 
+    public static double getVolumeLevel() {
+        return volumeLevel;
+    }
+
+    public static void setVolumeLevel(double volumeLevel) {
+        GamePane.volumeLevel = volumeLevel;
+    }
+
+    public static int getNumHits() {
+        return numHits;
+    }
+
+    public static int getNumMisses() {
+        return numMisses;
+    }
+
+    public static int getScore() {
+        return score;
+    }
+
+    public static int getMaxCombo() {
+        return maxCombo;
+    }
+
+    private void calculateMaxCombo() {
+        if (maxCombo < comboCounter) {
+            maxCombo = comboCounter;
+        }
+    }
+
+    public static int getMaxClause() {
+        return maxClause;
+    }
+
+    private void calculateMaxClause() {
+        if (maxClause < comboLevel && comboLevel < 11) {
+            maxClause = comboLevel;
+        }
+    }
+
+    public static double getAccuracy() {
+        return accuracy;
+    }
 }

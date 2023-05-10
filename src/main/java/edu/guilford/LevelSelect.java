@@ -2,11 +2,8 @@ package edu.guilford;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
-
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,11 +16,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import menuassets.MenuButton;
-import menuassets.infoText;
+import menuassets.InfoText;
 import menuassets.ArrowButton;
 import menuassets.DifficultyText;
 import menuassets.EasyLvlButton;
 import menuassets.HardLvlButton;
+import menuassets.InfoRectangle;
 import menuassets.MedLvlButton;
 
 public class LevelSelect extends Pane {
@@ -49,12 +47,14 @@ public class LevelSelect extends Pane {
     static int songDelay;
     static double beatsToDelayOffset = 0; // weird glitch where if if you return to menu, the SRT! button is not on beat
 
+    static String mods;
     private static boolean hardcoreDiff = false;
     private static boolean chaosDiff = false;
     private static boolean infiniteHealth = false;
     private static boolean songWithVideo = false;
 
-    String song1EasyName = "Flower Dance";
+    static String songName;
+    String song1EasyName = "Life is a Highway";
     String song2EasyName = "The Stains of Time";
     String song1MedName = "Dynamite";
     String song2MedName = "Placeholder";
@@ -72,24 +72,25 @@ public class LevelSelect extends Pane {
     TranslateTransition medTextTransition;
     TranslateTransition hardTextTransition;
 
-    boolean easyDiff = true;
-    boolean medDiff = false;
-    boolean hardDiff = false;
+    static String difficulty;
+    static boolean easyDiff = true;
+    static boolean medDiff = false;
+    static boolean hardDiff = false;
     boolean transitionsRunning = false;
 
     ArrowButton previousMenuButton;
     ArrowButton nextMenuButton;
 
-    Rectangle infoRect;
+    InfoRectangle infoRect;
     Rectangle topBorderRect;
     Rectangle bottomBorderRect;
 
     DifficultyText easyText;
     DifficultyText medText;
     DifficultyText hardText;
-    infoText bpmText;
-    infoText durationText;
-    infoText difficultyInfoText;
+    InfoText bpmText;
+    InfoText durationText;
+    InfoText difficultyInfoText;
 
     ImageView diffStar1;
     ImageView diffStar2;
@@ -118,12 +119,12 @@ public class LevelSelect extends Pane {
         easyText = new DifficultyText("Easy");
         medText = new DifficultyText("Medium");
         hardText = new DifficultyText("Hard");
-        infoRect = new Rectangle();
+        infoRect = new InfoRectangle();
         topBorderRect = new Rectangle();
         bottomBorderRect = new Rectangle();
-        bpmText = new infoText("BPM: ");
-        durationText = new infoText("Duration: ");
-        difficultyInfoText = new infoText("Difficulty: ");
+        bpmText = new InfoText("BPM: ");
+        durationText = new InfoText("Duration: ");
+        difficultyInfoText = new InfoText("Difficulty: ");
         hardcore = new MenuButton();
         chaos = new MenuButton();
         noFail = new MenuButton();
@@ -200,7 +201,7 @@ public class LevelSelect extends Pane {
                 medTextTransition.play();
                 easyTextTransition.setByX(500);
                 easyTextTransition.play();
-                infoRect.setFill(Color.GREEN);
+                infoRect.setGradColor(Color.GREEN);
                 medDiff = false;
                 easyDiff = true;
                 slidesound();
@@ -217,7 +218,7 @@ public class LevelSelect extends Pane {
                 easyTextTransition.play();
                 hardTextTransition.setByX(500);
                 hardTextTransition.play();
-                infoRect.setFill(Color.RED);
+                infoRect.setGradColor(Color.RED);
                 easyDiff = false;
                 hardDiff = true;
                 slidesound();
@@ -234,7 +235,7 @@ public class LevelSelect extends Pane {
                 hardTextTransition.play();
                 medTextTransition.setByX(500);
                 medTextTransition.play();
-                infoRect.setFill(Color.ORANGE);
+                infoRect.setGradColor(Color.ORANGE);
                 hardDiff = false;
                 medDiff = true;
                 slidesound();
@@ -265,7 +266,7 @@ public class LevelSelect extends Pane {
                 easyTextTransition.play();
                 medTextTransition.setByX(500);
                 medTextTransition.play();
-                infoRect.setFill(Color.ORANGE);
+                infoRect.setGradColor(Color.ORANGE);
                 medDiff = true;
                 easyDiff = false;
                 slidesound();
@@ -282,7 +283,7 @@ public class LevelSelect extends Pane {
                 medTextTransition.play();
                 hardTextTransition.setByX(500);
                 hardTextTransition.play();
-                infoRect.setFill(Color.RED);
+                infoRect.setGradColor(Color.RED);
                 medDiff = false;
                 hardDiff = true;
                 slidesound();
@@ -299,7 +300,7 @@ public class LevelSelect extends Pane {
                 hardTextTransition.play();
                 easyTextTransition.setByX(500);
                 easyTextTransition.play();
-                infoRect.setFill(Color.GREEN);
+                infoRect.setGradColor(Color.GREEN);
                 hardDiff = false;
                 easyDiff = true;
                 slidesound();
@@ -335,11 +336,11 @@ public class LevelSelect extends Pane {
         this.getChildren().add(easySong1);
         easySong1.setOnMouseEntered(event -> {
             hoversound();
-            songVideo = "FlowerDanceVideo.mp4";
+            songVideo = "HighwaySong.mp4";
             levelSelectVideo();
             easySong1.setMinSize(600, 80);
-            songBPM = 100;
-            songDuration = "4:23";
+            songBPM = 103;
+            songDuration = "4:30";
             difficultyStars = 1;
             updateInfo();
         });
@@ -351,11 +352,12 @@ public class LevelSelect extends Pane {
         easySong1.setOnAction(event -> {
             hoversound();
             StartMenuPane.stopThreads();
-            songVideo = "FlowerDanceVideo.mp4";
-            songFileName = "FlowerDance.wav";
-            songBPM = 100;
-            songDelay = 44;
-            songWithVideo = false;
+            songVideo = "HighwaySong.mp4";
+            songFileName = "HighwaySong.mp4";
+            songBPM = 103;
+            songDelay = 48;
+            songWithVideo = true;
+            songName = song1EasyName;
             Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(gameScene);
@@ -388,6 +390,7 @@ public class LevelSelect extends Pane {
             songBPM = 100;
             songDelay = 5;
             songWithVideo = false;
+            songName = song2EasyName;
             Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(gameScene);
@@ -420,6 +423,7 @@ public class LevelSelect extends Pane {
             songBPM = 120;
             songDelay = 14;
             songWithVideo = true;
+            songName = song1MedName;
             Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(gameScene);
@@ -489,7 +493,7 @@ public class LevelSelect extends Pane {
         infoRect.setOpacity(0.75);
         infoRect.setLayoutX(850);
         infoRect.setLayoutY(10);
-        infoRect.setFill(Color.GREEN);
+        infoRect.setGradColor(Color.GREEN);
         infoRect.setStroke(Color.BLACK);
         infoRect.setStrokeWidth(10);
         infoRect.setArcWidth(50);
@@ -675,7 +679,7 @@ public class LevelSelect extends Pane {
         returnToMenuButton.setOnAction(event -> {
             hoversound();
             StartMenuPane.mainMenuPlayer.stop();
-            beatsToDelayOffset = -1.5;
+            beatsToDelayOffset = -2;
             Scene mainMenuScene = new Scene(new StartMenuPane(), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(mainMenuScene);
@@ -793,6 +797,48 @@ public class LevelSelect extends Pane {
             starsList.add(star);
             this.getChildren().add(star);
         }
+    }
+
+    public static String getSongName() {
+        return songName;
+    }
+
+    public static String getDifficulty() {
+        if (easyDiff && !medDiff && !hardDiff) {
+            difficulty = "Easy";
+        } else if (!easyDiff && medDiff && !hardDiff) {
+            difficulty = "Medium";
+        } else if (!easyDiff && !medDiff && hardDiff) {
+            difficulty = "Hard";
+        } else {
+            difficulty = "Error calculating difficulty";
+        }
+        return difficulty;
+    }
+
+    public static String getMods() {
+        if (hardcoreDiff && !chaosDiff && !infiniteHealth) {
+            mods = "Hardcore";
+        } else if (!hardcoreDiff && chaosDiff && !infiniteHealth) {
+            mods = "Chaos";
+        } else if (!hardcoreDiff && !chaosDiff && infiniteHealth) {
+            mods = "No Fail";
+        } else if (hardcoreDiff && chaosDiff && !infiniteHealth) {
+            mods = "Hardcore, Chaos";
+        } else if (hardcoreDiff && !chaosDiff && infiniteHealth) {
+            mods = "Hardcore, No Fail";
+        } else if (!hardcoreDiff && chaosDiff && infiniteHealth) {
+            mods = "Chaos, No Fail";
+        } else if (hardcoreDiff && chaosDiff && infiniteHealth) {
+            mods = "Hardcore, Chaos, No Fail";
+        } else {
+            mods = "None";
+        }
+        return mods;
+    }
+
+    public static int getDifficultyStars() {
+        return difficultyStars;
     }
 
 }

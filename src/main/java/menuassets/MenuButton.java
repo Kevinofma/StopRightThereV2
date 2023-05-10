@@ -20,7 +20,7 @@ public class MenuButton extends Button{
         super.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 10, 0, 0, 0);");
         super.setTextFill(Color.rgb(255, 255, 255));
         super.setBackground(new Background(
-                new BackgroundFill(Color.PINK, new CornerRadii(10), Insets.EMPTY)));
+                new BackgroundFill(Color.DEEPPINK, new CornerRadii(10), Insets.EMPTY)));
                 super.setBorder(new Border(
             new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10),
             new BorderWidths(3)))); // Set border width to 3 pixels

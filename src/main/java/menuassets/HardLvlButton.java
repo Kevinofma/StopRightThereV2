@@ -20,6 +20,6 @@ public class HardLvlButton extends Button{
         super.setBackground(new Background(fill));
         super.setOpacity(1);
         // give the button a drop shadow and a thick white border
-        super.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); -fx-border-color: black; -fx-border-width: 5px;");
+        super.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); -fx-border-color: white; -fx-border-width: 5px;");
     }
 }

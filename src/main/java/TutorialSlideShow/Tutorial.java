@@ -29,7 +29,7 @@ public class Tutorial extends Pane{
 
         mainMenuButton.setOnAction(event -> {
             StartMenuPane.mainMenuPlayer.stop();
-            LevelSelect.setBeatsToDelayOffset(-1.5);
+            LevelSelect.setBeatsToDelayOffset(-2);
             Scene mainMenuScene = new Scene(new StartMenuPane(), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(mainMenuScene);
