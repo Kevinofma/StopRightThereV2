@@ -16,7 +16,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import menuassets.MenuButton;
-import menuassets.InfoTrext;
+import menuassets.InfoText;
 import menuassets.ArrowButton;
 import menuassets.DifficultyText;
 import menuassets.EasyLvlButton;
@@ -88,9 +88,9 @@ public class LevelSelect extends Pane {
     DifficultyText easyText;
     DifficultyText medText;
     DifficultyText hardText;
-    InfoTrext bpmText;
-    InfoTrext durationText;
-    InfoTrext difficultyInfoText;
+    InfoText bpmText;
+    InfoText durationText;
+    InfoText difficultyInfoText;
 
     ImageView diffStar1;
     ImageView diffStar2;
@@ -116,11 +116,11 @@ public class LevelSelect extends Pane {
         songWithVideo = false;
 
         song1EasyName = "Life is a Highway";
-        song2EasyName = "The Stains of Time";
+        song2EasyName = "I've Been a Fool";
         song1MedName = "Dynamite";
-        song2MedName = "Placeholder";
-        song1HardName = "Placeholder";
-        song2HardName = "Placeholder";
+        song2MedName = "Persona 4 - Specialist";
+        song1HardName = "Hey Ya!";
+        song2HardName = "We Are Japanese Goblin";
 
         easyDiff = true;
         medDiff = false;
@@ -142,9 +142,9 @@ public class LevelSelect extends Pane {
         infoRect = new InfoRectangle();
         topBorderRect = new Rectangle();
         bottomBorderRect = new Rectangle();
-        bpmText = new InfoTrext("BPM: ");
-        durationText = new InfoTrext("Duration: ");
-        difficultyInfoText = new InfoTrext("Difficulty: ");
+        bpmText = new InfoText("BPM: ");
+        durationText = new InfoText("Duration: ");
+        difficultyInfoText = new InfoText("Difficulty: ");
         hardcore = new MenuButton();
         chaos = new MenuButton();
         noFail = new MenuButton();
@@ -396,14 +396,14 @@ public class LevelSelect extends Pane {
         easySong2.setMinSize(500, 80);
         easySong2.setOnMouseEntered(event -> {
             hoversound();
-            songVideo = "StainsOfTimeVideo.mp4";
+            songVideo = "BakamitaiEnglish.mp4";
             levelSelectVideo();
-            songFileName = "The_Stains_of_Time.wav";
+            songFileName = "BakamitaiEnglish.mp4";
             levelSelectSong();
             easySong2.setMinSize(600, 80);
-            songBPM = 100;
-            songDuration = "2:10";
-            difficultyStars = 2;
+            songBPM = 75;
+            songDuration = "4:52";
+            difficultyStars = 1;
             updateInfo();
         });
 
@@ -419,16 +419,53 @@ public class LevelSelect extends Pane {
                 mediaSongPlayer.dispose();
             }
             StartMenuPane.stopThreads();
-            songVideo = "StainsOfTimeVideo.mp4";
-            songFileName = "The_Stains_of_Time.wav";
-            songBPM = 100;
-            songDelay = 5;
-            songWithVideo = false;
+            songVideo = "BakamitaiEnglish.mp4";
+            songFileName = "BakamitaiEnglish.mp4";
+            songBPM = 75;
+            songDelay = 17;
+            songWithVideo = true;
             songName = song2EasyName;
             Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
             Stage Stage = (Stage) this.getScene().getWindow();
             Stage.setScene(gameScene);
         });
+
+
+        // easySong2.setOnMouseEntered(event -> {
+        //     hoversound();
+        //     songVideo = "SpinningChip.mp4";
+        //     levelSelectVideo();
+        //     songFileName = "homestuck.m4a";
+        //     levelSelectSong();
+        //     easySong2.setMinSize(600, 80);
+        //     songBPM = 91;
+        //     songDuration = "2:10";
+        //     difficultyStars = 1;
+        //     updateInfo();
+        // });
+
+        // easySong2.setOnMouseExited(event -> {
+        //     easySong2.setMinSize(500, 80);
+        // });
+
+        // easySong2.setOnAction(event -> {
+        //     hoversound();
+        //     if (mediaSongPlayer != null) {
+        //         System.out.println("Stopped Level Select music");
+        //         mediaSongPlayer.stop();
+        //         mediaSongPlayer.dispose();
+        //     }
+        //     StartMenuPane.stopThreads();
+        //     songVideo = "SpinningChip.mp4";
+        //     songFileName = "homestuck.m4a";
+        //     songBPM = 91;
+        //     songDelay = 25;
+        //     songWithVideo = false;
+        //     songName = song2EasyName;
+        //     Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
+        //     Stage Stage = (Stage) this.getScene().getWindow();
+        //     Stage.setScene(gameScene);
+        // });
 
         this.getChildren().add(medSong1);
         medSong1.setLayoutX(-550);
@@ -443,7 +480,7 @@ public class LevelSelect extends Pane {
             medSong1.setMinSize(600, 80);
             songBPM = 120;
             songDuration = "3:21";
-            difficultyStars = 3;
+            difficultyStars = 2;
             updateInfo();
         });
 
@@ -476,11 +513,38 @@ public class LevelSelect extends Pane {
         medSong2.setMinSize(500, 80);
         medSong2.setOnMouseEntered(event -> {
             hoversound();
+            songVideo = "persona4specialist.mp4";
+            levelSelectVideo();
+            songFileName = "persona4specialist.mp4";
+            levelSelectSong();
             medSong2.setMinSize(600, 80);
+            songBPM = 129;
+            songDuration = "2:20";
+            difficultyStars = 3;
+            updateInfo();
         });
 
         medSong2.setOnMouseExited(event -> {
             medSong2.setMinSize(500, 80);
+        });
+
+        medSong2.setOnAction(event -> {
+            hoversound();
+            if (mediaSongPlayer != null) {
+                System.out.println("Stopped Level Select music");
+                mediaSongPlayer.stop();
+                mediaSongPlayer.dispose();
+            }
+            StartMenuPane.stopThreads();
+            songVideo = "persona4specialist.mp4";
+            songFileName = "persona4specialist.mp4";
+            songBPM = 129;
+            songDelay = 35;
+            songWithVideo = true;
+            songName = song2MedName;
+            Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
+            Stage Stage = (Stage) this.getScene().getWindow();
+            Stage.setScene(gameScene);
         });
 
         this.getChildren().add(hardSong1);
@@ -489,7 +553,38 @@ public class LevelSelect extends Pane {
         hardSong1.setMinSize(500, 80);
         hardSong1.setOnMouseEntered(event -> {
             hoversound();
+            songVideo = "heyYa.mp4";
+            levelSelectVideo();
+            songFileName = "heyYa.mp4";
+            levelSelectSong();
             hardSong1.setMinSize(600, 80);
+            songBPM = 158;
+            songDuration = "3:56";
+            difficultyStars = 4;
+            updateInfo();
+        });
+
+        hardSong1.setOnMouseExited(event -> {
+            hardSong1.setMinSize(500, 80);
+        });
+
+        hardSong1.setOnAction(event -> {
+            hoversound();
+            if (mediaSongPlayer != null) {
+                System.out.println("Stopped Level Select music");
+                mediaSongPlayer.stop();
+                mediaSongPlayer.dispose();
+            }
+            StartMenuPane.stopThreads();
+            songVideo = "heyYa.mp4";
+            songFileName = "heyYa.mp4";
+            songBPM = 158;
+            songDelay = 3;
+            songWithVideo = true;
+            songName = song1HardName;
+            Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
+            Stage Stage = (Stage) this.getScene().getWindow();
+            Stage.setScene(gameScene);
         });
 
         hardSong1.setOnMouseExited(event -> {
@@ -502,11 +597,38 @@ public class LevelSelect extends Pane {
         hardSong2.setMinSize(500, 80);
         hardSong2.setOnMouseEntered(event -> {
             hoversound();
+            songVideo = "JapaneseGoblin.mp4";
+            levelSelectVideo();
+            songFileName = "JapaneseGoblin.mp4";
+            levelSelectSong();
             hardSong2.setMinSize(600, 80);
+            songBPM = 180;
+            songDuration = "3:49";
+            difficultyStars = 5;
+            updateInfo();
         });
 
         hardSong2.setOnMouseExited(event -> {
             hardSong2.setMinSize(500, 80);
+        });
+
+        hardSong2.setOnAction(event -> {
+            hoversound();
+            if (mediaSongPlayer != null) {
+                System.out.println("Stopped Level Select music");
+                mediaSongPlayer.stop();
+                mediaSongPlayer.dispose();
+            }
+            StartMenuPane.stopThreads();
+            songVideo = "JapaneseGoblin.mp4";
+            songFileName = "JapaneseGoblin.mp4";
+            songBPM = 180;
+            songDelay = 1;
+            songWithVideo = true;
+            songName = song2HardName;
+            Scene gameScene = new Scene(new GamePane(songVideo, songFileName), 1250, 650);
+            Stage Stage = (Stage) this.getScene().getWindow();
+            Stage.setScene(gameScene);
         });
 
         topBorderRect.setWidth(1250);

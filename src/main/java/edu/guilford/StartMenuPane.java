@@ -3,6 +3,8 @@ package edu.guilford;
 import java.nio.file.Paths;
 
 import TutorialSlideShow.Tutorial;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -41,12 +43,15 @@ public class StartMenuPane extends Pane {
     TranslateTransition startViewTransition;
     TranslateTransition tutorialViewTransition;
 
+    private static boolean startup = true;
+
     // constructor
     public StartMenuPane() {
 
         this.setStyle("-fx-background-image: url('MainMenuWallpaper.jpg'); -fx-background-size: 1250, 650;");
-        mainMenuMusic();
         mainMenuVideo();
+        mainMenuMusicLoad(); // load the file into music player so it is not out of sync at start up
+        System.out.println("startup = " + startup);
 
         logoButton = new Button("SRT!");
         startButton = new Button();
@@ -106,8 +111,8 @@ public class StartMenuPane extends Pane {
 
         double bpm = 140;
         double beatDuration = (60000 / bpm);
-        //double beatsToDelay = 12 + LevelSelect.getBeatsToDelayOffset();
-        double beatsToDelay = 11.5 + LevelSelect.getBeatsToDelayOffset();
+        // double beatsToDelay = 12 + LevelSelect.getBeatsToDelayOffset();
+        double beatsToDelay = 10; // + LevelSelect.getBeatsToDelayOffset();
 
         ScaleTransition pulseTransition = new ScaleTransition(Duration.millis(beatDuration), logoButton);
         pulseTransition.setFromX(1.2);
@@ -117,12 +122,38 @@ public class StartMenuPane extends Pane {
         pulseTransition.setCycleCount(Timeline.INDEFINITE);
 
         double delayDuration = (double) beatsToDelay * beatDuration;
-        PauseTransition delay = new PauseTransition(Duration.millis(delayDuration));
-        delay.setOnFinished(event -> {
+        PauseTransition pulseDelay = new PauseTransition(Duration.millis(delayDuration));
+        pulseDelay.setOnFinished(event -> {
             pulseTransition.play();
         });
-        delay.play();
-        System.out.println(delay.getStatus());
+        System.out.println(pulseDelay.getStatus());
+
+        if (startup) {
+            ImageView startupView = new ImageView(new Image("headphonesTitle.jpg"));
+            this.getChildren().add(startupView);
+
+            FadeTransition startupFade = new FadeTransition(Duration.millis(500), startupView);
+            startupFade.setFromValue(1);
+            startupFade.setToValue(0);
+            startupFade.setCycleCount(1);
+
+            PauseTransition startupDelay = new PauseTransition(Duration.millis(3000));
+            startupDelay.setOnFinished(event -> {
+                startupFade.play();
+            });
+            startupDelay.play();
+
+            startupFade.setOnFinished(event -> {
+                startupView.setVisible(false);
+                startupView.setMouseTransparent(true);
+                startup = false;
+                mainMenuPlayer.play();
+                pulseDelay.play();
+            });
+        } else if (!startup) {
+            mainMenuPlayer.play();
+            pulseDelay.play();
+        }
 
         logoTransition = new TranslateTransition(Duration.millis(250), logoButton);
         logoTransition.setCycleCount(1);
@@ -240,18 +271,22 @@ public class StartMenuPane extends Pane {
         mediaPlayer.play();
     }
 
-    public void mainMenuMusic() {
+    public void mainMenuMusicLoad() {
         String s = "src/main/resources/MeltyBloodMainMenuMusic.mp3";
         Media h = new Media(Paths.get(s).toUri().toString());
         mainMenuPlayer = new MediaPlayer(h);
         // set the volume to 50%
         mainMenuPlayer.setVolume(0.5 * GamePane.getVolumeLevel());
-        mainMenuPlayer.play();
+        Timeline checkMainMusic = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+            mainMenuPlayer.getStatus(); // sometimes music will stop working if it is not constantly being checked on (like a first grader)
+        }));
+        checkMainMusic.setCycleCount(Timeline.INDEFINITE);
+        checkMainMusic.play();
     }
 
     public static void stopMainMenuMusic() {
         if (mainMenuPlayer != null) {
-        mainMenuPlayer.stop();
+            mainMenuPlayer.stop();
         }
     }
 

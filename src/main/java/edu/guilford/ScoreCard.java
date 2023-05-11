@@ -97,7 +97,7 @@ public class ScoreCard extends Pane {
         score = 500000;
         songName = "Song Name";
         difficulty = "Difficulty";
-        accuracy = 83.4;
+        accuracy = 98;
         hits = 1000;
         misses = 58;
         mods = "Hardcore Chaos";

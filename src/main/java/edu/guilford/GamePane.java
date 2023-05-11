@@ -139,9 +139,14 @@ import javafx.util.Duration;
 // dynamic cheering system depending on grade
 // * improved level select by adding song/level previews
 // * added an example score card accessible from the tutorial
+// * A cat now dies when you lose
+// * Added menu loading screen to notify the user that the game is sound based
+// ** BUG FIX: fixed a bug where the menu pulse would be out of sync when first starting up the game
+// This was due to issues loading the file, loading the file and then playing the music when I needed to fixed it
+// ** ADDED MORE SONGS AND LEVELs, REMOVED OLD ONES
+// * adjusted values to make faster levels 
 
 // TO-DO LIST: (copy and paste into features when finished)
-// * Add more songs/levels
 
 // TO - MAYBE - DO LIST:
 // make the main menu pulse animation based on song time (should fix bugs)
@@ -156,6 +161,7 @@ public class GamePane extends Pane {
     static boolean switchColor = false;
     private Button previousButton = null; // used to store the values of the previous button so that a line can be drawn
                                           // from the previous button to the next button
+    private Button morePreviousButton = null; // might need later
     ArrayList<Line> lines = new ArrayList<>(); // List to store the line objects because theres a bug where the first
                                                // line created wont clear so we clear the list instead of each line individually
     private GameLine line;
@@ -163,7 +169,7 @@ public class GamePane extends Pane {
     private ScoreLabel scoreLabel;
     double bpm = LevelSelect.getBPM(); // beats per minute of the song
     double beatDuration = (60000 / bpm); // duration of a single beat in milliseconds
-    double noteBuffer = 1000 * (100/bpm); // the amount of time before the beat that the button spawns, smaller buffer for higher bpm songs
+    double noteBuffer = 500 * (200/bpm); // the amount of time before the beat that the button spawns, smaller buffer for higher bpm songs
     int beatsToDelay = LevelSelect.getSongDelay();
     int countdownValue = beatsToDelay + 1; // +1 so countdown doesn't display 0
     private CountdownText countdownText;
@@ -398,6 +404,7 @@ public class GamePane extends Pane {
         missButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                System.out.println("Missed due to OUTSIDE");
                 decreaseScoreLight();
                 ImageView XMark = new ImageView(new Image("xmark.png"));
                 XMark.setTranslateX(event.getX() - 75);
@@ -514,6 +521,7 @@ public class GamePane extends Pane {
             }
 
             // Store the current button as the previous button for the next iteration
+            morePreviousButton = previousButton;
             previousButton = gameButton;
 
             getChildren().add(gameButton);
@@ -532,13 +540,13 @@ public class GamePane extends Pane {
                     System.out.println(elapsedTime);
                     // if the difference is within the beat duration, then the player clicked the
                     // button on the beat
-                    if (elapsedTime < noteBuffer + noteBuffer/3 && elapsedTime > noteBuffer - noteBuffer/3) {
+                    if (elapsedTime < noteBuffer + noteBuffer/2 && elapsedTime > noteBuffer - noteBuffer/2) {
                         // remove the button from the scene
                         getChildren().remove(gameButton);
                         // add a checkmark image to the location of the button
                         ImageView checkMark = new ImageView(new Image("checkmark.png"));
-                        checkMark.setTranslateX(gameButton.getTranslateX());
-                        checkMark.setTranslateY(gameButton.getTranslateY());
+                        checkMark.setTranslateX(gameButton.getTranslateX() - 2);
+                        checkMark.setTranslateY(gameButton.getTranslateY() - 2);
                         checkMark.setMouseTransparent(true);
                         checkMark.setFitWidth(100);
                         checkMark.setFitHeight(100);
@@ -720,7 +728,7 @@ public class GamePane extends Pane {
             }));
             lateTimer.play();
 
-            clearTimer = new Timeline(new KeyFrame(Duration.millis(beatDuration * 2 + noteBuffer), e -> {
+            clearTimer = new Timeline(new KeyFrame(Duration.millis(beatDuration * 2 + noteBuffer * 1.5), e -> {
                 // Add a Xmark image to the location of the button
                 if (!clicked) {
                     ImageView XMark = new ImageView(new Image("xmark.png"));
@@ -730,6 +738,7 @@ public class GamePane extends Pane {
                     XMark.setFitHeight(75);
                     XMark.setOpacity(1);
                     getChildren().add(XMark);
+                    misssound();
                     // create a parallel transition to fade out the Xmark and scale it down to 0
                     ParallelTransition fadeOut = new ParallelTransition();
                     FadeTransition fade = new FadeTransition(Duration.millis(1000), XMark);
@@ -741,7 +750,7 @@ public class GamePane extends Pane {
                     fadeOut.play();
                     // decrease the score
                     decreaseScoreFull();
-                    misssound();
+                    System.out.println("Missed due to LATE");
                 }
                 clicked = false;
                 getChildren().remove(gameButton);
@@ -804,6 +813,13 @@ public class GamePane extends Pane {
         hitPlayer.play();
     }
 
+    public void killsound() {
+        String s = "src/main/resources/killsound.wav";
+        Media h = new Media(Paths.get(s).toUri().toString());
+        MediaPlayer killPlayer = new MediaPlayer(h);
+        killPlayer.play();
+    }
+
     public void misssound() {
         String s = "src/main/resources/misssound.wav";
         Media h = new Media(Paths.get(s).toUri().toString());
@@ -825,7 +841,7 @@ public class GamePane extends Pane {
         score = score + 500;
         scoreLabel.setScore(score);
         if (currentHealth < 100) {
-            currentHealth = currentHealth + 5;
+            currentHealth = currentHealth + 10;
         }
         comboCounter++;
         calculateMaxCombo();
@@ -910,6 +926,7 @@ public class GamePane extends Pane {
         // Check if health reaches 0 and trigger endGame()
         if (currentHealth <= 0) {
             numMisses = numMisses - 2; // subtract 2 misses that happen during the ending of the game
+            killsound();
             endGame();
         }
     }
@@ -1039,8 +1056,9 @@ public class GamePane extends Pane {
         if (musicPlayer.getStatus() == MediaPlayer.Status.STOPPED) {
             endGame();
         }
-        System.out.println(musicPlayer.getStatus()); // for some reason music will randomly stop sometimes if this
+        // System.out.println(musicPlayer.getStatus()); // for some reason music will randomly stop sometimes if this
                                                      // is not here... WHYYYY!!!!
+        musicPlayer.getStatus();
 
         if (comboPlayerOn) {
             System.out.println(comboPlayer.getStatus()); // for some reason music will randomly stop sometimes if this
